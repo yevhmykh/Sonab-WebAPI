@@ -9,7 +9,7 @@ This is some kind of forum with posts and some other staff... I think... I hope.
 
 ## What interesting here?
 
-Auth0, background jobs.
+Auth0, background jobs, SignalR.
 
 ## How to run it?
 

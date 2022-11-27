@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.SignalR;
+using Sonab.WebAPI.Extentions;
+using Sonab.WebAPI.Hubs;
 using Sonab.WebAPI.Models.Auth0Communication;
 using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Repositories.Abstract;
@@ -11,20 +14,36 @@ public class LoadInfoWorker : ILoadInfoWorker
     private readonly ILogger<LoadInfoWorker> _logger;
     private readonly IUserRepository _userRepository;
     private readonly IAuth0CommunicationService _auth0Service;
+    private readonly IHubContext<NotificationHub> _hub;
 
     public LoadInfoWorker(
         ILogger<LoadInfoWorker> logger,
         IUserRepository userRepository,
-        IAuth0CommunicationService auth0Service)
+        IAuth0CommunicationService auth0Service,
+        IHubContext<NotificationHub> hub)
     {
         _logger = logger;
         _userRepository = userRepository;
         _auth0Service = auth0Service;
+        _hub = hub;
     }
 
     public async Task StartWork(object data, CancellationToken stoppingToken)
     {
-        string userId = (string)data;
+        try
+        {
+            await LoadUserInfo((string)data, stoppingToken);
+        }
+        catch
+        {
+            await _hub.Clients.User((string)data)
+                .SendErrorAsync("Your information is not loaded. Please, re-login!");
+            throw;
+        }
+    }
+
+    private async Task LoadUserInfo(string userId, CancellationToken stoppingToken)
+    {
         _logger.LogInformation($"Loading info for user with ID: '{userId}'");
 
         UserInfo info = await _auth0Service.GetUserInfoAsync(userId);

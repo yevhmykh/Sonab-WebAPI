@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Sonab.WebAPI.Contexts;
 using Sonab.WebAPI.Extentions.Program;
+using Sonab.WebAPI.Hubs;
 
 const string allowOrigins = "_allowOrigins";
 
@@ -36,11 +37,15 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(builder.Configuration["AllowedCors"])
             .WithHeaders(HeaderNames.Authorization)
             .WithHeaders(HeaderNames.ContentType)
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithHeaders(HeaderNames.XRequestedWith)
+            .WithHeaders("x-signalr-user-agent");
     });
 });
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -89,6 +94,23 @@ builder.Services.AddAuthentication(options =>
 {
     options.Authority = builder.Configuration["Auth0:Authority"];
     options.Audience = builder.Configuration["Auth0:Audience"];
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            // If the request is for our hub...
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) &&
+                (path.StartsWithSegments("/Hub")))
+            {
+                // Read the token out of the query string
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 var app = builder.Build();
@@ -116,6 +138,7 @@ app.UseAuthorization();
 
 app.UseSonabExceptionHandler();
 
+app.MapHub<NotificationHub>("/Hub");
 app.MapControllers();
 
 app.Run();
