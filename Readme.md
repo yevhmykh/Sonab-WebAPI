@@ -13,7 +13,10 @@ Auth0, background jobs, SignalR.
 
 ## How to run it?
 
-You should use ready docker image, because some Auth0 functionality requires sensitive data, but I will not attach this data to repository. 
+Some Auth0 functionality requires sensitive data, but I will not attach this data to repository. So if you want to run it follow next steps:
+1. Create an Auth0 account
+2. Create a new API and a new machine to machine application with 'read:user' permision to managment API(Don't worry. It's free :wink:)
+3. Set credentials in configuration or docker-compose file. Now you can start...
 
 ## License
 

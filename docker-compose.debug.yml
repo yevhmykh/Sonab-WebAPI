@@ -1,0 +1,18 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  sonabwebapi:
+    image: sonabwebapi
+    build:
+      context: .
+      dockerfile: Sonab.WebAPI/Dockerfile
+    ports:
+      - 5139:5139
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Auth0:ClientId=value
+      - Auth0:ClientSecret=value
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
