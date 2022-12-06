@@ -12,7 +12,7 @@ public static class ExceptionHandlerExtentions
             // "Magic" number of status code:)
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
-            ErrorMessages message = new("Server error", "Unexpected server error. Please contact dev team");
+            ErrorMessages message = new("Server error", "Error.Server");
             await context.Response.WriteAsync(JsonSerializer.Serialize(message));
         });
     });

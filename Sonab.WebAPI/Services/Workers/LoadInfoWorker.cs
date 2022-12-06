@@ -37,7 +37,7 @@ public class LoadInfoWorker : ILoadInfoWorker
         catch
         {
             await _hub.Clients.User((string)data)
-                .SendErrorAsync("Your information is not loaded. Please, re-login!");
+                .SendErrorAsync("User.Error.Info");
             throw;
         }
     }
