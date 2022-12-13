@@ -18,12 +18,15 @@ public static class ServicesExtentions
         services.AddSingleton<IBackgroundQueue, BackgroundQueue>();
         services.AddSingleton<IRequestClient, HttpRequestClient>();
 
+        services.AddHttpContextAccessor();
+
         return services;
     }
 
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPostRepository, PostRepository>();
 
         return services;
     }
@@ -40,6 +43,7 @@ public static class ServicesExtentions
     public static IServiceCollection AddMainServices(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IPostService, PostService>();
 
         services.AddHostedService<BackgroundWorker>();
 

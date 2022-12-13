@@ -1,5 +1,5 @@
 using Sonab.WebAPI.Enums;
-using Sonab.WebAPI.Models;
+using Sonab.WebAPI.Models.Jobs;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 using Sonab.WebAPI.Utils.Abstact;
@@ -20,14 +20,6 @@ public class UserService : IUserService
         _logger = logger;
         _queue = queue;
         _repository = repository;
-    }
-
-    public async Task<ServiceResponse> IsLoadedAsync(string externalId)
-    {
-        _logger.LogDebug($"Checking ID: '{externalId}'");
-        bool result = await _repository.CheckIdAsync(externalId);
-
-        return ServiceResponse.CreateOk(result);
     }
 
     public void RequestLoading(string externalId)

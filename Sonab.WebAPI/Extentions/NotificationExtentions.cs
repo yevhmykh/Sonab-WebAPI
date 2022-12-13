@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Sonab.WebAPI.Enums;
-using Sonab.WebAPI.Models;
+using Sonab.WebAPI.Models.Notifications;
 
 namespace Sonab.WebAPI.Extentions;
 

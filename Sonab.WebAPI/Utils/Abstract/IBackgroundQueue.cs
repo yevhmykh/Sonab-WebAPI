@@ -1,4 +1,4 @@
-using Sonab.WebAPI.Models;
+using Sonab.WebAPI.Models.Jobs;
 
 namespace Sonab.WebAPI.Utils.Abstact;
 

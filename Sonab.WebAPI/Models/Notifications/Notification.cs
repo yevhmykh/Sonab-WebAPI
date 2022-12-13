@@ -1,6 +1,6 @@
 using Sonab.WebAPI.Enums;
 
-namespace Sonab.WebAPI.Models;
+namespace Sonab.WebAPI.Models.Notifications;
 
 public struct Notification
 {

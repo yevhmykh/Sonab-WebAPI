@@ -1,5 +1,5 @@
 using Sonab.WebAPI.Enums;
-using Sonab.WebAPI.Models;
+using Sonab.WebAPI.Models.Jobs;
 using Sonab.WebAPI.Services.Workers.Abstract;
 using Sonab.WebAPI.Utils.Abstact;
 

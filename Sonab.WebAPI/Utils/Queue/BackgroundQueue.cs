@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using Sonab.WebAPI.Models;
+using Sonab.WebAPI.Models.Jobs;
 using Sonab.WebAPI.Utils.Abstact;
 
 namespace Sonab.WebAPI.Utils.Queue;

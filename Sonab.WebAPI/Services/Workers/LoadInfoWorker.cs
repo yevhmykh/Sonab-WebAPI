@@ -6,6 +6,7 @@ using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 using Sonab.WebAPI.Services.Workers.Abstract;
+using Sonab.WebAPI.Utils.Constants;
 
 namespace Sonab.WebAPI.Services.Workers;
 
@@ -37,7 +38,7 @@ public class LoadInfoWorker : ILoadInfoWorker
         catch
         {
             await _hub.Clients.User((string)data)
-                .SendErrorAsync("User.Error.Info");
+                .SendErrorAsync(Messages.InfoNotLoaded);
             throw;
         }
     }
