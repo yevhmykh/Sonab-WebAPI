@@ -25,5 +25,13 @@ public class UserTypeConfiguration : BaseTypeConfiguration<User>
 
         builder.Property(u => u.Name)
             .IsRequired();
+
+        builder.HasMany(e => e.Subscribers)
+            .WithOne(us => us.Publisher)
+            .HasForeignKey(us => us.PublisherId);
+
+        builder.HasMany(e => e.Subscriptions)
+            .WithOne(us => us.User)
+            .HasForeignKey(us => us.UserId);
     }
 }

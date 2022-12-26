@@ -1,5 +1,5 @@
 using Sonab.WebAPI.Enums;
-using Sonab.WebAPI.Models;
+using Sonab.WebAPI.Models.Jobs;
 using Sonab.WebAPI.Utils.Queue;
 
 namespace Sonab.WebAPI.Test.Utils;

@@ -26,6 +26,7 @@ public static class ServicesExtentions
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
 
         return services;
@@ -43,6 +44,7 @@ public static class ServicesExtentions
     public static IServiceCollection AddMainServices(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ISubsriptionService, SubsriptionService>();
         services.AddScoped<IPostService, PostService>();
 
         services.AddHostedService<BackgroundWorker>();

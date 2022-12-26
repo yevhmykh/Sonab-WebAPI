@@ -48,7 +48,7 @@ public class Auth0CommunicationService : IAuth0CommunicationService
         }
 
         UserInfo userInfo = await _requestClient.GetRequestAsync<UserInfo>(
-            $"{_configuration["Auth0:Domain"]}/api/v2/users/{userId}",
+            $"{_configuration["Auth0:Domain"]}/api/v2/users/{userId.ToLower()}",
             TokenData.AccessToken);
         _logger.LogDebug("User information successfully loaded.");
         return userInfo;

@@ -23,39 +23,33 @@ public class PostController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("all/list")]
+    [HttpGet("{search}/list")]
     [ProducesResponseType(typeof(PostShortInfo[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAsync([FromQuery] ListParams listParams)
+    public async Task<IActionResult> GetAsync(
+        [FromRoute] SearchType search,
+        [FromQuery] ListParams listParams)
     {
-        ServiceResponse result = await _service.GetListAsync(listParams);
+        if (search != SearchType.All && !User.Identity.IsAuthenticated)
+        {
+            return Unauthorized();
+        }
 
-        return Ok(result.Data);
-    }
-
-    [HttpGet("user/list")]
-    [ProducesResponseType(typeof(PostShortInfo[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetUserPostsAsync([FromQuery] ListParams listParams)
-    {
-        ServiceResponse result = await _service.GetUserPostsAsync(listParams);
+        ServiceResponse result = await _service.GetListAsync(search, listParams);
 
         return Ok(result.Data);
     }
 
     [AllowAnonymous]
-    [HttpGet("all/count")]
+    [HttpGet("{search}/count")]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    public async Task<IActionResult> CountAsync()
+    public async Task<IActionResult> CountAsync([FromRoute] SearchType search)
     {
-        ServiceResponse result = await _service.CountAsync();
+        if (search != SearchType.All && !User.Identity.IsAuthenticated)
+        {
+            return Unauthorized();
+        }
 
-        return Ok(result.Data);
-    }
-
-    [HttpGet("user/count")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    public async Task<IActionResult> CountUserPostAsync()
-    {
-        ServiceResponse result = await _service.CountUserPostAsync();
+        ServiceResponse result = await _service.CountAsync(search);
 
         return Ok(result.Data);
     }

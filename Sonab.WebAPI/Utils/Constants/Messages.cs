@@ -11,21 +11,14 @@ public static class Messages
     /// Only owner can edit this item
     /// </summary>
     public const string OnlyOwner = "Error.OnlyOwner";
-}
-public static class Limits
-{
-    /// <summary>
-    /// Article title minimal length
-    /// </summary>
-    public const int TitleMinLength = 2;
 
     /// <summary>
-    /// Article title maximum length
+    /// User already subscribed
     /// </summary>
-    public const int TitleMaxLength = 100;
+    public const string AlreadySubscribed = "AlreadySubscribed";
 
     /// <summary>
-    /// Article content minimal length
+    /// User not subscribed
     /// </summary>
-    public const int ContentMinLength = 200;
+    public const string NotSubscribed = "NotSubscribed";
 }
