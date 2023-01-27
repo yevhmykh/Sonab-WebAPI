@@ -13,6 +13,7 @@ public class PostServiceTests : BaseServiceSetup
     private readonly Mock<IPostRepository> _mockRepository = new();
     private readonly Mock<IUserRepository> _mockUserRepository = new();
     private readonly Mock<ISubscriptionRepository> _mockSubscriptionRepository = new();
+    private readonly Mock<ITopicRepository> _mockTopicRepository = new();
     private readonly PostService _service;
 
     public PostServiceTests()
@@ -25,7 +26,8 @@ public class PostServiceTests : BaseServiceSetup
             _mockAccessor.Object,
             _mockRepository.Object,
             _mockUserRepository.Object,
-            _mockSubscriptionRepository.Object);
+            _mockSubscriptionRepository.Object,
+            _mockTopicRepository.Object);
     }
 
     [Fact]
@@ -75,7 +77,8 @@ public class PostServiceTests : BaseServiceSetup
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
             .ReturnsAsync(new Post
             {
-                User = new User()
+                User = new User(),
+                Topics = new()
             });
         _mockSubscriptionRepository.Setup(x => x.IsSubscribedAsync(
             It.IsAny<User>(),
@@ -99,7 +102,8 @@ public class PostServiceTests : BaseServiceSetup
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
             .ReturnsAsync(new Post
             {
-                User = new User()
+                User = new User(),
+                Topics = new()
             });
 
         // Act
@@ -123,7 +127,8 @@ public class PostServiceTests : BaseServiceSetup
                 User = new User
                 {
                     ExternalId = "USER1"
-                }
+                },
+                Topics = new()
             });
 
         // Act
@@ -144,7 +149,8 @@ public class PostServiceTests : BaseServiceSetup
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
             .ReturnsAsync(new Post
             {
-                User = new User()
+                User = new User(),
+                Topics = new()
             });
         _mockSubscriptionRepository.Setup(x => x.IsSubscribedAsync(
             It.IsAny<User>(),
@@ -175,23 +181,35 @@ public class PostServiceTests : BaseServiceSetup
         Assert.Equal(404, result.StatusCode);
     }
 
-    [Fact]
-    public async Task Create_Ok()
+    [Theory]
+    [MemberData(nameof(RequestsWithTags))]
+    public async Task Create_Ok(EditRequest request)
     {
         // Setup
+        int savedTagCount = 0;
         SetUserId("user1");
         _mockUserRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
             .ReturnsAsync(new User());
         _mockRepository.Setup(x => x.AddAndSaveAsync(It.IsAny<Post>()))
-            .Callback<Post>((p) => p.Id = 7)
+            .Callback<Post>((p) =>
+            {
+                p.Id = 7;
+                savedTagCount = p.Topics.Count;
+            })
             .ReturnsAsync(true);
+        _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
+            .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic
+            {
+                Id = y
+            }).ToArray());
 
         // Act
-        ServiceResponse result = await _service.CreateAsync(new());
+        ServiceResponse result = await _service.CreateAsync(request);
 
         // Assert
         Assert.True(result.IsSuccess());
         Assert.Equal(7, (int)result.Data);
+        Assert.Equal(request.Tags.Length, savedTagCount);
     }
 
     [Fact]
@@ -210,10 +228,38 @@ public class PostServiceTests : BaseServiceSetup
         Assert.Contains(Messages.InfoNotLoaded, result.Messages.Errors["Error"]);
     }
 
-    [Fact]
-    public async Task Update_Ok()
+    [Theory]
+    [MemberData(nameof(RequestsWithMissingTags))]
+    public async Task Create_TagsNotFound(
+        EditRequest request,
+        int[] existing,
+        string[] expectedFields)
     {
         // Setup
+        SetUserId("user1");
+        _mockUserRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
+            .ReturnsAsync(new User());
+        _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
+            .ReturnsAsync((IEnumerable<int> x) => x
+                .Where(y => existing.Contains(y)).Select(y => new Topic
+                {
+                    Id = y
+                }).ToArray());
+
+        // Act
+        ServiceResponse result = await _service.CreateAsync(request);
+
+        // Assert
+        Assert.Equal(404, result.StatusCode);
+        Assert.Equal(expectedFields, result.Messages.Errors.Keys);
+    }
+
+    [Theory]
+    [MemberData(nameof(RequestsWithTags))]
+    public async Task Update_Ok(EditRequest request)
+    {
+        // Setup
+        int savedTagCount = 0;
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
             .ReturnsAsync(new Post
@@ -225,15 +271,25 @@ public class PostServiceTests : BaseServiceSetup
             });
         bool updated = false;
         _mockRepository.Setup(x => x.UpdateAndSaveAsync(It.IsAny<Post>()))
-            .Callback(() => updated = true)
+            .Callback<Post>((p) =>
+            {
+                updated = true;
+                savedTagCount = p.Topics.Count;
+            })
             .ReturnsAsync(true);
+        _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
+            .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic
+            {
+                Id = y
+            }).ToArray());
 
         // Act
-        ServiceResponse result = await _service.UpdateAsync(1, new());
+        ServiceResponse result = await _service.UpdateAsync(1, request);
 
         // Assert
         Assert.True(result.IsSuccess());
         Assert.True(updated);
+        Assert.Equal(request.Tags.Length, savedTagCount);
     }
 
     [Fact]
@@ -276,6 +332,39 @@ public class PostServiceTests : BaseServiceSetup
         Assert.Equal(403, result.StatusCode);
         Assert.Contains(Messages.OnlyOwner, result.Messages.Errors["Error"]);
         Assert.False(updated);
+    }
+
+    [Theory]
+    [MemberData(nameof(RequestsWithMissingTags))]
+    public async Task Update_TagsNotFound(
+        EditRequest request,
+        int[] existing,
+        string[] expectedFields
+    )
+    {
+        // Setup
+        SetUserId("user1");
+        _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
+            .ReturnsAsync(new Post
+            {
+                User = new User
+                {
+                    ExternalId = "USER1"
+                }
+            });
+        _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
+            .ReturnsAsync((IEnumerable<int> x) => x
+                .Where(y => existing.Contains(y)).Select(y => new Topic
+                {
+                    Id = y
+                }).ToArray());
+
+        // Act
+        ServiceResponse result = await _service.UpdateAsync(1, request);
+
+        // Assert
+        Assert.Equal(404, result.StatusCode);
+        Assert.Equal(expectedFields, result.Messages.Errors.Keys);
     }
 
     [Fact]
@@ -345,4 +434,104 @@ public class PostServiceTests : BaseServiceSetup
         Assert.Contains(Messages.OnlyOwner, result.Messages.Errors["Error"]);
         Assert.False(deleted);
     }
+
+    public static IEnumerable<object[]> RequestsWithTags => new List<object[]>
+    {
+        new object[]
+        {
+            new EditRequest()
+        },
+        new object[]
+        {
+            new EditRequest
+            {
+                Tags = new TopicTag[0]
+            },
+        },
+        new object[]
+        {
+            new EditRequest
+            {
+                Tags = new[]
+                {
+                    new TopicTag
+                    {
+                        Id = 1
+                    },
+                    new TopicTag
+                    {
+                        Name = "Fancy"
+                    },
+                    new TopicTag
+                    {
+                        Id = 2,
+                        Name = "Test"
+                    }
+                }
+            }
+        },
+        new object[]
+        {
+            new EditRequest
+            {
+                Tags = new[]
+                {
+                    new TopicTag
+                    {
+                        Name = "Fancy"
+                    },
+                    new TopicTag
+                    {
+                        Name = "Test"
+                    }
+                }
+            }
+        },
+    };
+
+    public static IEnumerable<object[]> RequestsWithMissingTags => new List<object[]>
+    {
+        new object[]
+        {
+            new EditRequest
+            {
+                Tags = new[]
+                {
+                    new TopicTag
+                    {
+                        Id = 2
+                    },
+                    new TopicTag
+                    {
+                        Id = 3
+                    }
+                }
+            },
+            new int[0],
+            new[] { "Tags[0].Id", "Tags[1].Id" }
+        },
+        new object[]
+        {
+            new EditRequest
+            {
+                Tags = new[]
+                {
+                    new TopicTag
+                    {
+                        Id = 2
+                    },
+                    new TopicTag
+                    {
+                        Id = 3
+                    },
+                    new TopicTag
+                    {
+                        Id = 4
+                    }
+                }
+            },
+            new[] { 2 },
+            new[] { "Tags[1].Id", "Tags[2].Id" }
+        },
+    };
 }

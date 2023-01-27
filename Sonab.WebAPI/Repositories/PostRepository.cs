@@ -16,13 +16,21 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
 
     public Task<PostShortInfo[]> GetAsync(ListParams listParams) => _context.Posts
         .Include(x => x.User)
+        .Include(x => x.Topics)
+        .AsSplitQuery()
+        .OrderByDescending(x => x.Id)
         .ApplyParams(listParams)
         .Select(x => new PostShortInfo()
         {
             Id = x.Id,
             Title = x.Title,
             Content = x.Content,
-            Author = x.User.Name
+            Author = x.User.Name,
+            Tags = x.Topics.Select(y => new TopicTag
+            {
+                Id = y.Id,
+                Name = y.Name
+            }).ToArray()
         })
         .ToArrayAsync();
 
@@ -30,14 +38,22 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
         string externalId,
         ListParams listParams) => _context.Posts
         .Include(x => x.User)
+        .Include(x => x.Topics)
+        .AsSplitQuery()
         .Where(x => x.User.ExternalId == externalId)
+        .OrderByDescending(x => x.Id)
         .ApplyParams(listParams)
         .Select(x => new PostShortInfo()
         {
             Id = x.Id,
             Title = x.Title,
             Content = x.Content,
-            Author = x.User.Name
+            Author = x.User.Name,
+            Tags = x.Topics.Select(y => new TopicTag
+            {
+                Id = y.Id,
+                Name = y.Name
+            }).ToArray()
         })
         .ToArrayAsync();
 
@@ -45,14 +61,22 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
         string externalId,
         ListParams listParams) => _context.Posts
         .Include(x => x.User)
+        .Include(x => x.Topics)
+        .AsSplitQuery()
         .Where(x => x.User.Subscribers.Any(y => y.User.ExternalId == externalId))
+        .OrderByDescending(x => x.Id)
         .ApplyParams(listParams)
         .Select(x => new PostShortInfo()
         {
             Id = x.Id,
             Title = x.Title,
             Content = x.Content,
-            Author = x.User.Name
+            Author = x.User.Name,
+            Tags = x.Topics.Select(y => new TopicTag
+            {
+                Id = y.Id,
+                Name = y.Name
+            }).ToArray()
         })
         .ToArrayAsync();
 
@@ -68,5 +92,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
 
     public Task<Post> GetFullInfoAsync(int id) => _context.Posts
         .Include(x => x.User)
+        .Include(x => x.Topics)
+        .AsSplitQuery()
         .FirstOrDefaultAsync(x => x.Id == id);
 }

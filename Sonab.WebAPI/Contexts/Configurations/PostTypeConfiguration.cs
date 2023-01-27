@@ -23,5 +23,10 @@ public class PostTypeConfiguration : BaseTypeConfiguration<Post>
         builder
             .Property(e => e.Created)
             .HasDefaultValueSql("DATETIME('now')");
+
+        builder
+            .HasOne(e => e.User)
+            .WithMany(us => us.Posts)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

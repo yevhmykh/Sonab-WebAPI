@@ -4,7 +4,6 @@ using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Models.Posts;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
-using Sonab.WebAPI.Utils.Constants;
 
 namespace Sonab.WebAPI.Services;
 
@@ -15,24 +14,28 @@ public class PostService : IPostService
     private readonly IPostRepository _repository;
     private readonly IUserRepository _userRepository;
     private readonly ISubscriptionRepository _subscriptionRepository;
+    private readonly ITopicRepository _topicRepository;
 
     public PostService(
         ILogger<PostService> logger,
         IHttpContextAccessor accessor,
         IPostRepository repository,
         IUserRepository userRepository,
-        ISubscriptionRepository subscriptionRepository)
+        ISubscriptionRepository subscriptionRepository,
+        ITopicRepository topicRepository)
     {
         _logger = logger;
         _accessor = accessor;
         _repository = repository;
         _userRepository = userRepository;
         _subscriptionRepository = subscriptionRepository;
+        _topicRepository = topicRepository;
     }
 
     public async Task<ServiceResponse> GetListAsync(SearchType search, ListParams listParams)
     {
-        PostShortInfo[] result = search switch  {
+        PostShortInfo[] result = search switch
+        {
             SearchType.All => await _repository.GetAsync(listParams),
             SearchType.User => await _repository
                 .GetUserPostsAsync(_accessor.GetUserId(), listParams),
@@ -45,7 +48,8 @@ public class PostService : IPostService
 
     public async Task<ServiceResponse> CountAsync(SearchType search)
     {
-        int result = search switch  {
+        int result = search switch
+        {
             SearchType.All => await _repository.CountAsync(),
             SearchType.User => await _repository
                 .CountUserPostAsync(_accessor.GetUserId()),
@@ -71,6 +75,11 @@ public class PostService : IPostService
             Content = post.Content,
             AuthorId = post.UserId,
             Author = post.User.Name,
+            Tags = post.Topics.Select(x => new TopicTag
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToArray(),
             IsEditAllowed = _accessor.TryGetUserId(out string userId) &&
                 post.User.ExternalId == userId
         };
@@ -85,18 +94,38 @@ public class PostService : IPostService
 
     public async Task<ServiceResponse> CreateAsync(EditRequest request)
     {
-        User user = await _userRepository.GetByExternalIdAsync(_accessor.GetUserId());
+        string userId = _accessor.GetUserId();
+        User user = await _userRepository.GetByExternalIdAsync(userId);
         if (user == null)
         {
-            _logger.LogError($"User information is not loaded. ID: '{_accessor.GetUserId()}'");
+            _logger.LogError($"User information is not loaded. ID: '{userId}'");
             return ServiceResponse.CreateConflict(Messages.InfoNotLoaded);
+        }
+
+        (List<int> ids, List<string> names) = request.SplitTags();
+        List<Topic> topics = new(names.Select(x => new Topic
+        {
+            Name = x,
+            NormalizedName = x.ToUpper()
+        }));
+        if (ids.Count > 0)
+        {
+            Topic[] existingTopics = await _topicRepository.GetAsync(ids);
+            ids.RemoveAll(x => existingTopics.Any(y => y.Id == x));
+            if (ids.Count > 0)
+            {
+                string[] fieldNames = request.GetFieldsByIds(ids);
+                return ServiceResponse.CreateNotFound(Messages.NotFound, fieldNames);
+            }
+            topics.AddRange(existingTopics);
         }
 
         Post post = new()
         {
             Title = request.Title,
             Content = request.Content,
-            User = user
+            User = user,
+            Topics = topics
         };
         await _repository.AddAndSaveAsync(post);
 
@@ -115,8 +144,27 @@ public class PostService : IPostService
             return ServiceResponse.CreateForbidden(Messages.OnlyOwner);
         }
 
+        (List<int> ids, List<string> names) = request.SplitTags();
+        List<Topic> topics = new(names.Select(x => new Topic
+        {
+            Name = x,
+            NormalizedName = x.ToUpper()
+        }));
+        if (ids.Count > 0)
+        {
+            Topic[] existingTopics = await _topicRepository.GetAsync(ids);
+            ids.RemoveAll(x => existingTopics.Any(y => y.Id == x));
+            if (ids.Count > 0)
+            {
+                string[] fieldNames = request.GetFieldsByIds(ids);
+                return ServiceResponse.CreateNotFound(Messages.NotFound, fieldNames);
+            }
+            topics.AddRange(existingTopics);
+        }
+
         post.Content = request.Content;
         post.Title = request.Title;
+        post.Topics = topics;
         await _repository.UpdateAndSaveAsync(post);
 
         return ServiceResponse.CreateOk();

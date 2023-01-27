@@ -72,6 +72,12 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateAsync([FromBody] EditRequest request)
     {
+        if (!request.IsTagsValid(out string[] fieldNames))
+        {
+            _logger.LogDebug($"Bad tags: {request}");
+            return BadRequest(new ErrorMessages(fieldNames, Messages.TagsInvalid));
+        }
+
         ServiceResponse result = await _service.CreateAsync(request);
 
         return result.IsSuccess() ?
@@ -85,6 +91,12 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> EditAsync([FromRoute] int id, [FromBody] EditRequest request)
     {
+        if (!request.IsTagsValid(out string[] fieldNames))
+        {
+            _logger.LogDebug($"Bad tags: {request}");
+            return BadRequest(new ErrorMessages(fieldNames, Messages.TagsInvalid));
+        }
+
         ServiceResponse result = await _service.UpdateAsync(id, request);
 
         return result.IsSuccess() ?

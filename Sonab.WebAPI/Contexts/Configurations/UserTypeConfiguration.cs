@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sonab.WebAPI.Models.DB;
 
@@ -28,10 +29,12 @@ public class UserTypeConfiguration : BaseTypeConfiguration<User>
 
         builder.HasMany(e => e.Subscribers)
             .WithOne(us => us.Publisher)
-            .HasForeignKey(us => us.PublisherId);
+            .HasForeignKey(us => us.PublisherId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(e => e.Subscriptions)
             .WithOne(us => us.User)
-            .HasForeignKey(us => us.UserId);
+            .HasForeignKey(us => us.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

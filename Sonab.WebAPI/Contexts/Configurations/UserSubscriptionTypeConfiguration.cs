@@ -8,6 +8,6 @@ public class UserSubscriptionTypeConfiguration : IEntityTypeConfiguration<UserSu
 {
     public void Configure(EntityTypeBuilder<UserSubscription> builder)
     {
-        builder.HasKey(us => new { us.UserId, us.PublisherId});
+        builder.HasKey(us => new { us.UserId, us.PublisherId });
     }
 }

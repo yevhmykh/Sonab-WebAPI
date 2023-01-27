@@ -50,4 +50,3 @@ public class SubscriptionRepository : ISubscriptionRepository
         return await _context.SaveChangesAsync() > 0;
     }
 }
-

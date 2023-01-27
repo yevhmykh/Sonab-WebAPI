@@ -21,4 +21,14 @@ public static class Messages
     /// User not subscribed
     /// </summary>
     public const string NotSubscribed = "NotSubscribed";
+
+    /// <summary>
+    /// Entity not found
+    /// </summary>
+    public const string NotFound = "Error.NotFound";
+
+    /// <summary>
+    /// Bad request response
+    /// </summary>
+    public const string TagsInvalid = "Tag must have id or name";
 }

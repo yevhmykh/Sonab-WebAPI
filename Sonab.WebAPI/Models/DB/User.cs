@@ -7,6 +7,8 @@ public class User : Key
     public string Name { get; set; }
 
     public List<Post> Posts { get; set; }
+    public List<Comment> Comments { get; set; }
+    public List<Mark> Marks { get; set; }
     public List<UserSubscription> Subscriptions { get; set; }
     public List<UserSubscription> Subscribers { get; set; }
 }

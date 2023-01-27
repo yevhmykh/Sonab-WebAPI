@@ -3,6 +3,10 @@ namespace Sonab.WebAPI.Utils.Constants;
 public static class Limits
 {
     /// <summary>
+    /// Entity name minimal length
+    /// </summary>
+    public const int NameMinLength = 2;
+    /// <summary>
     /// Article title minimal length
     /// </summary>
     public const int TitleMinLength = 2;

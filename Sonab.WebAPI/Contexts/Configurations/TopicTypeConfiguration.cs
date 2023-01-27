@@ -15,5 +15,9 @@ public class TopicTypeConfiguration : BaseTypeConfiguration<Topic>
         builder
             .HasIndex(e => e.Name)
             .IsUnique();
+        
+        builder
+            .HasIndex(e => e.NormalizedName)
+            .IsUnique();
     }
 }

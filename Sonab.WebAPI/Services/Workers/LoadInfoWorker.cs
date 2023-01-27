@@ -6,7 +6,6 @@ using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 using Sonab.WebAPI.Services.Workers.Abstract;
-using Sonab.WebAPI.Utils.Constants;
 
 namespace Sonab.WebAPI.Services.Workers;
 

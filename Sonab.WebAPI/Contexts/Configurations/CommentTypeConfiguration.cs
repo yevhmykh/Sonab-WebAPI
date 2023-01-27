@@ -10,11 +10,17 @@ public class CommentTypeConfiguration : BaseTypeConfiguration<Comment>
     {
         base.Configure(builder);
 
-        builder.Property(u => u.Content)
+        builder
+            .Property(u => u.Content)
             .IsRequired();
 
         builder
             .Property(e => e.Created)
             .HasDefaultValueSql("DATETIME('now')");
+
+        builder
+            .HasOne(e => e.User)
+            .WithMany(us => us.Comments)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
