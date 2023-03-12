@@ -5,6 +5,7 @@ namespace Sonab.WebAPI.Repositories.Abstract;
 
 public interface ITopicRepository : IRepository<Topic>
 {
-    Task<Topic[]> GetAsync(IEnumerable<int> ids);
-    Task<TopicTag[]> GetByPartAsync(string namePart);
+    Task<List<Topic>> GetAsync(IEnumerable<int> ids);
+    Task<List<TopicTag>> GetByAsync(string namePart);
+    Task<List<TopicTag>> GetTopAsync();
 }

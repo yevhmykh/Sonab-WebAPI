@@ -27,7 +27,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(PostShortInfo[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAsync(
         [FromRoute] SearchType search,
-        [FromQuery] ListParams listParams)
+        [FromQuery] PostListParams listParams)
     {
         if (search != SearchType.All && !User.Identity.IsAuthenticated)
         {
@@ -42,14 +42,16 @@ public class PostController : ControllerBase
     [AllowAnonymous]
     [HttpGet("{search}/count")]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    public async Task<IActionResult> CountAsync([FromRoute] SearchType search)
+    public async Task<IActionResult> CountAsync(
+        [FromRoute] SearchType search,
+        [FromQuery] PostCountParams countParams)
     {
         if (search != SearchType.All && !User.Identity.IsAuthenticated)
         {
             return Unauthorized();
         }
 
-        ServiceResponse result = await _service.CountAsync(search);
+        ServiceResponse result = await _service.CountAsync(search, countParams);
 
         return Ok(result.Data);
     }

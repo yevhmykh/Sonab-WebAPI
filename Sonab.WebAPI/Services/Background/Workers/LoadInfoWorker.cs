@@ -5,11 +5,11 @@ using Sonab.WebAPI.Models.Auth0Communication;
 using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
-using Sonab.WebAPI.Services.Workers.Abstract;
+using Sonab.WebAPI.Services.Background.Workers.Abstract;
 
-namespace Sonab.WebAPI.Services.Workers;
+namespace Sonab.WebAPI.Services.Background.Workers;
 
-public class LoadInfoWorker : ILoadInfoWorker
+public sealed class LoadInfoWorker : ILoadInfoWorker
 {
     private readonly ILogger<LoadInfoWorker> _logger;
     private readonly IUserRepository _userRepository;

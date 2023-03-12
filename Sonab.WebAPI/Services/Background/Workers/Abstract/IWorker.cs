@@ -1,4 +1,4 @@
-namespace Sonab.WebAPI.Services.Workers.Abstract;
+namespace Sonab.WebAPI.Services.Background.Workers.Abstract;
 
 public interface IWorker
 {

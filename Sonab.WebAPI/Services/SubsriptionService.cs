@@ -28,8 +28,8 @@ public class SubsriptionService : ISubsriptionService
 
     public async Task<ServiceResponse> GetAsync()
     {
-        SubscriptionFullInfo[] result = await _repository
-            .GetByExternalIdAsync(_accessor.GetUserId());
+        List<SubscriptionFullInfo> result = await _repository
+            .GetByAsync(_accessor.GetUserId());
         return ServiceResponse.CreateOk(result);
     }
 

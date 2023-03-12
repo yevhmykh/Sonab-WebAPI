@@ -35,19 +35,34 @@ public class PostServiceTests : BaseServiceSetup
     {
         // Setup
         SetUserId("user1");
-        _mockRepository.Setup(x => x.GetAsync(It.IsAny<ListParams>()))
-            .ReturnsAsync(new PostShortInfo[5]);
+        _mockRepository.Setup(x => x.GetAsync(It.IsAny<PostListParams>()))
+            .ReturnsAsync(new List<PostShortInfo>
+            {
+                new PostShortInfo(),
+                new PostShortInfo(),
+                new PostShortInfo(),
+                new PostShortInfo(),
+                new PostShortInfo()
+            });
         _mockRepository.Setup(x => x.GetUserPostsAsync(
             It.Is<string>(y => y == "USER1"),
-            It.IsAny<ListParams>())).ReturnsAsync(new PostShortInfo[2]);
+            It.IsAny<PostListParams>())
+        )
+            .ReturnsAsync(new List<PostShortInfo>
+            {
+                new PostShortInfo(),
+                new PostShortInfo()
+            });
 
         // Act
         ServiceResponse result1 = await _service.GetListAsync(SearchType.All, new());
         ServiceResponse result2 = await _service.GetListAsync(SearchType.User, new());
 
         // Assert
-        Assert.Equal(5, ((PostShortInfo[])result1.Data).Length);
-        Assert.Equal(2, ((PostShortInfo[])result2.Data).Length);
+        Assert.True(result1.TryGetData(out List<PostShortInfo> data1));
+        Assert.Equal(5, data1.Count);
+        Assert.True(result2.TryGetData(out List<PostShortInfo> data2));
+        Assert.Equal(2, data2.Count);
     }
 
     [Fact]
@@ -55,14 +70,17 @@ public class PostServiceTests : BaseServiceSetup
     {
         // Setup
         SetUserId("user1");
-        _mockRepository.Setup(x => x.CountAsync())
+        _mockRepository.Setup(x => x.CountAsync(It.IsAny<PostCountParams>()))
             .ReturnsAsync(5);
         _mockRepository.Setup(x => x.CountPublishersPostAsync(
-            It.Is<string>(y => y == "USER1"))).ReturnsAsync(3);
+            It.Is<string>(y => y == "USER1"),
+            It.IsAny<PostCountParams>())
+        )
+            .ReturnsAsync(3);
 
         // Act
-        ServiceResponse result1 = await _service.CountAsync(SearchType.All);
-        ServiceResponse result2 = await _service.CountAsync(SearchType.Publishers);
+        ServiceResponse result1 = await _service.CountAsync(SearchType.All, new());
+        ServiceResponse result2 = await _service.CountAsync(SearchType.Publishers, new());
 
         // Assert
         Assert.Equal(5, (int)result1.Data);
@@ -89,7 +107,7 @@ public class PostServiceTests : BaseServiceSetup
 
         // Assert
         Assert.True(result.IsSuccess());
-        PostFullInfo post = (PostFullInfo)result.Data;
+        Assert.True(result.TryGetData(out PostFullInfo post));
         Assert.False(post.IsEditAllowed);
         Assert.False(post.IsSubscribed);
     }
@@ -111,7 +129,7 @@ public class PostServiceTests : BaseServiceSetup
 
         // Assert
         Assert.True(result.IsSuccess());
-        PostFullInfo post = (PostFullInfo)result.Data;
+        Assert.True(result.TryGetData(out PostFullInfo post));
         Assert.False(post.IsEditAllowed);
         Assert.False(post.IsSubscribed);
     }
@@ -136,7 +154,7 @@ public class PostServiceTests : BaseServiceSetup
 
         // Assert
         Assert.True(result.IsSuccess());
-        PostFullInfo post = (PostFullInfo)result.Data;
+        Assert.True(result.TryGetData(out PostFullInfo post));
         Assert.True(post.IsEditAllowed);
         Assert.False(post.IsSubscribed);
     }
@@ -161,7 +179,7 @@ public class PostServiceTests : BaseServiceSetup
 
         // Assert
         Assert.True(result.IsSuccess());
-        PostFullInfo post = (PostFullInfo)result.Data;
+        Assert.True(result.TryGetData(out PostFullInfo post));
         Assert.False(post.IsEditAllowed);
         Assert.True(post.IsSubscribed);
     }
@@ -182,7 +200,7 @@ public class PostServiceTests : BaseServiceSetup
     }
 
     [Theory]
-    [MemberData(nameof(RequestsWithTags))]
+    [MemberData(nameof(RequestsWithStoredTags))]
     public async Task Create_Ok(EditRequest request)
     {
         // Setup
@@ -201,15 +219,16 @@ public class PostServiceTests : BaseServiceSetup
             .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic
             {
                 Id = y
-            }).ToArray());
+            }).ToList());
 
         // Act
         ServiceResponse result = await _service.CreateAsync(request);
 
         // Assert
         Assert.True(result.IsSuccess());
-        Assert.Equal(7, (int)result.Data);
-        Assert.Equal(request.Tags.Length, savedTagCount);
+        Assert.True(result.TryGetData(out int id));
+        Assert.Equal(7, id);
+        Assert.Equal(request.Tags?.Length ?? 0, savedTagCount);
     }
 
     [Fact]
@@ -244,7 +263,7 @@ public class PostServiceTests : BaseServiceSetup
                 .Where(y => existing.Contains(y)).Select(y => new Topic
                 {
                     Id = y
-                }).ToArray());
+                }).ToList());
 
         // Act
         ServiceResponse result = await _service.CreateAsync(request);
@@ -255,7 +274,7 @@ public class PostServiceTests : BaseServiceSetup
     }
 
     [Theory]
-    [MemberData(nameof(RequestsWithTags))]
+    [MemberData(nameof(RequestsWithStoredTags))]
     public async Task Update_Ok(EditRequest request)
     {
         // Setup
@@ -281,7 +300,7 @@ public class PostServiceTests : BaseServiceSetup
             .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic
             {
                 Id = y
-            }).ToArray());
+            }).ToList());
 
         // Act
         ServiceResponse result = await _service.UpdateAsync(1, request);
@@ -289,7 +308,7 @@ public class PostServiceTests : BaseServiceSetup
         // Assert
         Assert.True(result.IsSuccess());
         Assert.True(updated);
-        Assert.Equal(request.Tags.Length, savedTagCount);
+        Assert.Equal(request.Tags?.Length ?? 0, savedTagCount);
     }
 
     [Fact]
@@ -357,7 +376,7 @@ public class PostServiceTests : BaseServiceSetup
                 .Where(y => existing.Contains(y)).Select(y => new Topic
                 {
                     Id = y
-                }).ToArray());
+                }).ToList());
 
         // Act
         ServiceResponse result = await _service.UpdateAsync(1, request);
@@ -435,7 +454,7 @@ public class PostServiceTests : BaseServiceSetup
         Assert.False(deleted);
     }
 
-    public static IEnumerable<object[]> RequestsWithTags => new List<object[]>
+    public static IEnumerable<object[]> RequestsWithStoredTags => new List<object[]>
     {
         new object[]
         {

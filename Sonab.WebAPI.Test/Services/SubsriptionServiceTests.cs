@@ -33,14 +33,22 @@ public class SubsriptionServiceTests : BaseServiceSetup
     {
         // Setup
         SetUserId("user1");
-        _mockRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
-            .ReturnsAsync(new SubscriptionFullInfo[5]);
+        _mockRepository.Setup(x => x.GetByAsync(It.Is<string>(y => y == "USER1")))
+            .ReturnsAsync(new List<SubscriptionFullInfo>
+            {
+                new SubscriptionFullInfo(),
+                new SubscriptionFullInfo(),
+                new SubscriptionFullInfo(),
+                new SubscriptionFullInfo(),
+                new SubscriptionFullInfo()
+            });
 
         // Act
         ServiceResponse result = await _service.GetAsync();
 
         // Assert
-        Assert.Equal(5, ((SubscriptionFullInfo[])result.Data).Length);
+        Assert.True(result.TryGetData(out List<SubscriptionFullInfo> data));
+        Assert.Equal(5, data.Count);
     }
 
     [Fact]
@@ -163,4 +171,3 @@ public class SubsriptionServiceTests : BaseServiceSetup
         Assert.Contains(Messages.NotSubscribed, result.Messages.Errors["Error"]);
     }
 }
-

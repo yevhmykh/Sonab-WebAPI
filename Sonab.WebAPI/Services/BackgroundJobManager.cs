@@ -1,18 +1,18 @@
 using Sonab.WebAPI.Enums;
 using Sonab.WebAPI.Models.Jobs;
-using Sonab.WebAPI.Services.Workers.Abstract;
+using Sonab.WebAPI.Services.Background.Workers.Abstract;
 using Sonab.WebAPI.Utils.Abstact;
 
 namespace Sonab.WebAPI.Services;
 
-public class BackgroundWorker : BackgroundService
+public sealed class BackgroundJobManager : BackgroundService
 {
-    private readonly ILogger<BackgroundWorker> _logger;
+    private readonly ILogger<BackgroundJobManager> _logger;
     private readonly IBackgroundQueue _queue;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public BackgroundWorker(
-        ILogger<BackgroundWorker> logger,
+    public BackgroundJobManager(
+        ILogger<BackgroundJobManager> logger,
         IBackgroundQueue queue,
         IServiceScopeFactory scopeFactory)
     {
@@ -23,7 +23,7 @@ public class BackgroundWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Starting background worker is starting....");
+        _logger.LogInformation("Starting background job manager....");
 
         await BackgroundProcessing(stoppingToken);
     }

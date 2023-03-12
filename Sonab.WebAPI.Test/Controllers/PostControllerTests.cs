@@ -30,7 +30,7 @@ public class PostControllerTests
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
         _mockService.Setup(x => x.GetListAsync(
             It.Is<SearchType>(y => y == SearchType.All),
-            It.IsAny<ListParams>())).ReturnsAsync(ServiceResponse.CreateOk(new object()));
+            It.IsAny<PostListParams>())).ReturnsAsync(ServiceResponse.CreateOk(new object()));
 
         // Act
         IActionResult result = await _controller.GetAsync(SearchType.All, new());
@@ -64,7 +64,9 @@ public class PostControllerTests
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(true);
         _mockService.Setup(x => x.GetListAsync(
             It.Is<SearchType>(y => y == searchType),
-            It.IsAny<ListParams>())).ReturnsAsync(ServiceResponse.CreateOk(new object()));
+            It.IsAny<PostListParams>())
+        )
+            .ReturnsAsync(ServiceResponse.CreateOk(new object()));
 
         // Act
         IActionResult result = await _controller.GetAsync(searchType, new());
@@ -78,11 +80,14 @@ public class PostControllerTests
     {
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
-        _mockService.Setup(x => x.CountAsync(It.Is<SearchType>(y => y == SearchType.All)))
+        _mockService.Setup(x => x.CountAsync(
+            It.Is<SearchType>(y => y == SearchType.All),
+            It.IsAny<PostCountParams>())
+        )
             .ReturnsAsync(ServiceResponse.CreateOk(1));
 
         // Act
-        IActionResult result = await _controller.CountAsync(SearchType.All);
+        IActionResult result = await _controller.CountAsync(SearchType.All, new());
 
         // Assert
         Assert.IsType<OkObjectResult>(result);
@@ -97,7 +102,7 @@ public class PostControllerTests
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
 
         // Act
-        IActionResult result = await _controller.CountAsync(searchType);
+        IActionResult result = await _controller.CountAsync(searchType, new());
 
         // Assert
         Assert.IsType<UnauthorizedResult>(result);
@@ -111,11 +116,14 @@ public class PostControllerTests
     {
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(true);
-        _mockService.Setup(x => x.CountAsync(It.Is<SearchType>(y => y == searchType)))
+        _mockService.Setup(x => x.CountAsync(
+            It.Is<SearchType>(y => y == searchType),
+            It.IsAny<PostCountParams>())
+        )
             .ReturnsAsync(ServiceResponse.CreateOk(new object()));
 
         // Act
-        IActionResult result = await _controller.CountAsync(searchType);
+        IActionResult result = await _controller.CountAsync(searchType, new());
 
         // Assert
         Assert.IsType<OkObjectResult>(result);

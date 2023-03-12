@@ -32,9 +32,9 @@ public class PostService : IPostService
         _topicRepository = topicRepository;
     }
 
-    public async Task<ServiceResponse> GetListAsync(SearchType search, ListParams listParams)
+    public async Task<ServiceResponse> GetListAsync(SearchType search, PostListParams listParams)
     {
-        PostShortInfo[] result = search switch
+        List<PostShortInfo> result = search switch
         {
             SearchType.All => await _repository.GetAsync(listParams),
             SearchType.User => await _repository
@@ -46,15 +46,15 @@ public class PostService : IPostService
         return ServiceResponse.CreateOk(result);
     }
 
-    public async Task<ServiceResponse> CountAsync(SearchType search)
+    public async Task<ServiceResponse> CountAsync(SearchType search, PostCountParams countParams)
     {
         int result = search switch
         {
-            SearchType.All => await _repository.CountAsync(),
+            SearchType.All => await _repository.CountAsync(countParams),
             SearchType.User => await _repository
-                .CountUserPostAsync(_accessor.GetUserId()),
+                .CountUserPostAsync(_accessor.GetUserId(), countParams),
             SearchType.Publishers => await _repository
-                .CountPublishersPostAsync(_accessor.GetUserId()),
+                .CountPublishersPostAsync(_accessor.GetUserId(), countParams),
             _ => throw new ArgumentException("Invalid search type")
         };
         return ServiceResponse.CreateOk(result);
@@ -110,7 +110,7 @@ public class PostService : IPostService
         }));
         if (ids.Count > 0)
         {
-            Topic[] existingTopics = await _topicRepository.GetAsync(ids);
+            List<Topic> existingTopics = await _topicRepository.GetAsync(ids);
             ids.RemoveAll(x => existingTopics.Any(y => y.Id == x));
             if (ids.Count > 0)
             {
@@ -152,7 +152,7 @@ public class PostService : IPostService
         }));
         if (ids.Count > 0)
         {
-            Topic[] existingTopics = await _topicRepository.GetAsync(ids);
+            List<Topic> existingTopics = await _topicRepository.GetAsync(ids);
             ids.RemoveAll(x => existingTopics.Any(y => y.Id == x));
             if (ids.Count > 0)
             {

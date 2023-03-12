@@ -3,8 +3,9 @@ using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services;
 using Sonab.WebAPI.Services.Abstract;
 using Sonab.WebAPI.Services.Auth0Communication;
-using Sonab.WebAPI.Services.Workers;
-using Sonab.WebAPI.Services.Workers.Abstract;
+using Sonab.WebAPI.Services.Background.Timed;
+using Sonab.WebAPI.Services.Background.Workers;
+using Sonab.WebAPI.Services.Background.Workers.Abstract;
 using Sonab.WebAPI.Utils.Abstact;
 using Sonab.WebAPI.Utils.Queue;
 using Sonab.WebAPI.Utils.RequestClients;
@@ -38,6 +39,7 @@ public static class ServicesExtentions
         services.AddScoped<IAuth0CommunicationService, Auth0CommunicationService>();
         
         services.AddScoped<ILoadInfoWorker, LoadInfoWorker>();
+        services.AddScoped<ILoadTopTopicsWorker, LoadTopTopicsWorker>();
 
         return services;
     }
@@ -49,7 +51,8 @@ public static class ServicesExtentions
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<ITopicService, TopicService>();
 
-        services.AddHostedService<BackgroundWorker>();
+        services.AddHostedService<BackgroundJobManager>();
+        services.AddHostedService<LoadTopTopicsTimedService>();
 
         return services;
     }

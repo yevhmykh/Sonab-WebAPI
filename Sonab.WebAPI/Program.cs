@@ -25,6 +25,8 @@ builder.Host.UseSerilog((hostContext, services, configuration) =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")));
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddUtils();
 builder.Services.AddRepositories();
 builder.Services.AddSubServices();

@@ -5,7 +5,7 @@ using Sonab.WebAPI.Models.Auth0Communication;
 using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
-using Sonab.WebAPI.Services.Workers;
+using Sonab.WebAPI.Services.Background.Workers;
 
 namespace Sonab.WebAPI.Test.Services.Workers;
 

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sonab.WebAPI.Contexts;
 using Sonab.WebAPI.Extentions;
-using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Models.Posts;
 using Sonab.WebAPI.Repositories.Abstract;
@@ -14,10 +13,12 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
     {
     }
 
-    public Task<PostShortInfo[]> GetAsync(ListParams listParams) => _context.Posts
+    public Task<List<PostShortInfo>> GetAsync(PostListParams listParams) => _context.Posts
         .Include(x => x.User)
         .Include(x => x.Topics)
         .AsSplitQuery()
+        .WhereIfHasValue(x => x.UserId, listParams.AuthorId)
+        .WhereTopic(listParams.TopicTagId)
         .OrderByDescending(x => x.Id)
         .ApplyParams(listParams)
         .Select(x => new PostShortInfo()
@@ -25,6 +26,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
             Id = x.Id,
             Title = x.Title,
             Content = x.Content,
+            AuthorId = x.UserId,
             Author = x.User.Name,
             Tags = x.Topics.Select(y => new TopicTag
             {
@@ -32,15 +34,17 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
                 Name = y.Name
             }).ToArray()
         })
-        .ToArrayAsync();
+        .ToListAsync();
 
-    public Task<PostShortInfo[]> GetUserPostsAsync(
+    public Task<List<PostShortInfo>> GetUserPostsAsync(
         string externalId,
-        ListParams listParams) => _context.Posts
+        PostListParams listParams
+    ) => _context.Posts
         .Include(x => x.User)
         .Include(x => x.Topics)
         .AsSplitQuery()
         .Where(x => x.User.ExternalId == externalId)
+        .WhereTopic(listParams.TopicTagId)
         .OrderByDescending(x => x.Id)
         .ApplyParams(listParams)
         .Select(x => new PostShortInfo()
@@ -48,6 +52,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
             Id = x.Id,
             Title = x.Title,
             Content = x.Content,
+            AuthorId = x.UserId,
             Author = x.User.Name,
             Tags = x.Topics.Select(y => new TopicTag
             {
@@ -55,15 +60,18 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
                 Name = y.Name
             }).ToArray()
         })
-        .ToArrayAsync();
+        .ToListAsync();
 
-    public Task<PostShortInfo[]> GetPublishersPostsAsync(
+    public Task<List<PostShortInfo>> GetPublishersPostsAsync(
         string externalId,
-        ListParams listParams) => _context.Posts
+        PostListParams listParams
+    ) => _context.Posts
         .Include(x => x.User)
         .Include(x => x.Topics)
         .AsSplitQuery()
         .Where(x => x.User.Subscribers.Any(y => y.User.ExternalId == externalId))
+        .WhereTopic(listParams.TopicTagId)
+        .WhereIfHasValue(x => x.UserId, listParams.AuthorId)
         .OrderByDescending(x => x.Id)
         .ApplyParams(listParams)
         .Select(x => new PostShortInfo()
@@ -71,6 +79,7 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
             Id = x.Id,
             Title = x.Title,
             Content = x.Content,
+            AuthorId = x.UserId,
             Author = x.User.Name,
             Tags = x.Topics.Select(y => new TopicTag
             {
@@ -78,16 +87,28 @@ public class PostRepository : BaseRepository<Post>, IPostRepository
                 Name = y.Name
             }).ToArray()
         })
-        .ToArrayAsync();
+        .ToListAsync();
 
-    public Task<int> CountAsync() => _context.Posts.CountAsync();
-
-    public Task<int> CountUserPostAsync(string externalId) => _context.Posts
-        .Where(x => x.User.ExternalId == externalId)
+    public Task<int> CountAsync(PostCountParams countParams) => _context.Posts
+        .WhereIfHasValue(x => x.UserId, countParams.AuthorId)
+        .WhereTopic(countParams.TopicTagId)
         .CountAsync();
 
-    public Task<int> CountPublishersPostAsync(string externalId) => _context.Posts
+    public Task<int> CountUserPostAsync(
+        string externalId,
+        PostCountParams countParams
+    ) => _context.Posts
+        .Where(x => x.User.ExternalId == externalId)
+        .WhereTopic(countParams.TopicTagId)
+        .CountAsync();
+
+    public Task<int> CountPublishersPostAsync(
+        string externalId,
+        PostCountParams countParams
+    ) => _context.Posts
         .Where(x => x.User.Subscribers.Any(y => y.User.ExternalId == externalId))
+        .WhereTopic(countParams.TopicTagId)
+        .WhereIfHasValue(x => x.UserId, countParams.AuthorId)
         .CountAsync();
 
     public Task<Post> GetFullInfoAsync(int id) => _context.Posts

@@ -3,26 +3,26 @@ using Microsoft.Extensions.Logging;
 using Sonab.WebAPI.Enums;
 using Sonab.WebAPI.Models.Jobs;
 using Sonab.WebAPI.Services;
-using Sonab.WebAPI.Services.Workers.Abstract;
+using Sonab.WebAPI.Services.Background.Workers.Abstract;
 using Sonab.WebAPI.Utils.Abstact;
 
 namespace Sonab.WebAPI.Test.Services;
 
-public class BackgroundWorkerTests
+public class BackgroundJobManagerTests
 {
     private readonly Mock<IServiceScopeFactory> _mockScopeFactory = new();
     private readonly Mock<IServiceScope> _mockServiceScope = new();
     private readonly Mock<IServiceProvider> _mockServiceProvider = new();
     private readonly Mock<IBackgroundQueue> _mockQueue = new();
-    private readonly BackgroundWorker _worker;
+    private readonly BackgroundJobManager _worker;
 
-    public BackgroundWorkerTests()
+    public BackgroundJobManagerTests()
     {
         _mockServiceScope.Setup(x => x.ServiceProvider).Returns(_mockServiceProvider.Object);
         _mockScopeFactory.Setup(x => x.CreateScope()).Returns(_mockServiceScope.Object);
 
         _worker = new(
-            Mock.Of<ILogger<BackgroundWorker>>(),
+            Mock.Of<ILogger<BackgroundJobManager>>(),
             _mockQueue.Object,
             _mockScopeFactory.Object);
     }

@@ -15,7 +15,7 @@ public class SubscriptionRepository : ISubscriptionRepository
         _context = context;
     }
 
-    public Task<SubscriptionFullInfo[]> GetByExternalIdAsync(string externalId) =>
+    public Task<List<SubscriptionFullInfo>> GetByAsync(string externalId) =>
         _context.Subscriptions
             .Include(x => x.Publisher)
             .Where(x => x.User.ExternalId == externalId)
@@ -24,7 +24,7 @@ public class SubscriptionRepository : ISubscriptionRepository
                 PublisherId = x.PublisherId,
                 PublisherName = x.Publisher.Name
             })
-            .ToArrayAsync();
+            .ToListAsync();
 
     public Task<UserSubscription> GetSubscriptionAsync(string externalId, int publisherId) =>
         _context.Subscriptions.FirstOrDefaultAsync(x => x.User.ExternalId == externalId

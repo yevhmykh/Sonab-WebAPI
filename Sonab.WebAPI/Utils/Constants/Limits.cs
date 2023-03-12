@@ -20,4 +20,9 @@ public static class Limits
     /// Article content minimal length
     /// </summary>
     public const int ContentMinLength = 200;
+
+    /// <summary>
+    /// Max topic tag count which server return in response
+    /// </summary>
+    public const int TopicCount = 20;
 }

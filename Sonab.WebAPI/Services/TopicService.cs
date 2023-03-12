@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Models.Posts;
 using Sonab.WebAPI.Repositories.Abstract;
@@ -8,19 +9,30 @@ namespace Sonab.WebAPI.Services;
 public class TopicService : ITopicService
 {
     private readonly ILogger<TopicService> _logger;
+    private readonly IMemoryCache _memoryCache;
     private readonly ITopicRepository _repository;
 
     public TopicService(
         ILogger<TopicService> logger,
+        IMemoryCache memoryCache,
         ITopicRepository repository)
     {
         _logger = logger;
+        _memoryCache = memoryCache;
         _repository = repository;
     }
 
     public async Task<ServiceResponse> GetListAsync(string namePart)
     {
-        TopicTag[] tags = await _repository.GetByPartAsync(namePart);
+        List<TopicTag> tags = string.IsNullOrEmpty(namePart)
+            ? await GetTopAsync()
+            : await _repository.GetByAsync(namePart);
         return ServiceResponse.CreateOk(tags);
+    }
+
+    private async Task<List<TopicTag>> GetTopAsync()
+    {
+        return _memoryCache.Get<List<TopicTag>>(CacheValues.TopTopics)
+            ?? await _repository.GetTopAsync();
     }
 }
