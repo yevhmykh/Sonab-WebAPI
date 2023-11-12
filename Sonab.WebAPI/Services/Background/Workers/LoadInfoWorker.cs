@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using Sonab.WebAPI.Extentions;
+using Sonab.Core.Entities;
+using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Hubs;
 using Sonab.WebAPI.Models.Auth0Communication;
-using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 using Sonab.WebAPI.Services.Background.Workers.Abstract;
@@ -53,20 +53,14 @@ public sealed class LoadInfoWorker : ILoadInfoWorker
 
         if (user == null)
         {
-            user = new User
-            {
-                Email = info.Email.ToUpper(),
-                ExternalId = userId.ToUpper(),
-                Name = info.UserName
-            };
+            user = new User(userId, info.Email, info.UserName);
 
             await _userRepository.AddAndSaveAsync(user);
             _logger.LogInformation($"Saved with ID: {user.Id}");
         }
         else
         {
-            user.ExternalId = userId.ToUpper();
-            user.Name = info.UserName;
+            user.UpdateIdentifiers(userId, info.UserName);
 
             await _userRepository.UpdateAndSaveAsync(user);
             _logger.LogInformation($"Updated by ID: {user.Id}");

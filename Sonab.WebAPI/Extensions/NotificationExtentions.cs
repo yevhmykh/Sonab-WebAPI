@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using Sonab.WebAPI.Enums;
 using Sonab.WebAPI.Models.Notifications;
 
-namespace Sonab.WebAPI.Extentions;
+namespace Sonab.WebAPI.Extensions;
 
 public static class NotificationExtentions
 {

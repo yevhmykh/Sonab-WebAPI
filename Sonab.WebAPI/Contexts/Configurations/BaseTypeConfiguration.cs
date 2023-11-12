@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sonab.WebAPI.Models.DB;
+using Sonab.Core.Entities;
 
 namespace Sonab.WebAPI.Contexts.Configurations;
 
-public class BaseTypeConfiguration<IKey> : IEntityTypeConfiguration<IKey> where IKey : Key
+public class BaseTypeConfiguration<TKey> : IEntityTypeConfiguration<TKey> where TKey : Key
 {
-    public virtual void Configure(EntityTypeBuilder<IKey> builder)
+    public virtual void Configure(EntityTypeBuilder<TKey> builder)
     {
         builder.HasKey(k => k.Id);
 

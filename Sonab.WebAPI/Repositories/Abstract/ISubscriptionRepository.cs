@@ -1,4 +1,4 @@
-using Sonab.WebAPI.Models.DB;
+using Sonab.Core.Entities;
 using Sonab.WebAPI.Models.Subscriptions;
 
 namespace Sonab.WebAPI.Repositories.Abstract;

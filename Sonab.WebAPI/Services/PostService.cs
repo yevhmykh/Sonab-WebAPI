@@ -1,6 +1,6 @@
-using Sonab.WebAPI.Extentions;
+using Sonab.Core.Entities;
+using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Models.Posts;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
@@ -81,7 +81,7 @@ public class PostService : IPostService
                 Name = x.Name
             }).ToArray(),
             IsEditAllowed = _accessor.TryGetUserId(out string userId) &&
-                post.User.ExternalId == userId
+                            post.User.ExternalId == userId
         };
         if (!result.IsEditAllowed && userId != null)
         {
@@ -103,11 +103,7 @@ public class PostService : IPostService
         }
 
         (List<int> ids, List<string> names) = request.SplitTags();
-        List<Topic> topics = new(names.Select(x => new Topic
-        {
-            Name = x,
-            NormalizedName = x.ToUpper()
-        }));
+        List<Topic> topics = new(names.Select(name => new Topic(name)));
         if (ids.Count > 0)
         {
             List<Topic> existingTopics = await _topicRepository.GetAsync(ids);
@@ -117,16 +113,11 @@ public class PostService : IPostService
                 string[] fieldNames = request.GetFieldsByIds(ids);
                 return ServiceResponse.CreateNotFound(Messages.NotFound, fieldNames);
             }
+
             topics.AddRange(existingTopics);
         }
 
-        Post post = new()
-        {
-            Title = request.Title,
-            Content = request.Content,
-            User = user,
-            Topics = topics
-        };
+        Post post = new(request.Title, request.Content, user, topics);
         await _repository.AddAndSaveAsync(post);
 
         return ServiceResponse.CreateOk(post.Id);
@@ -139,17 +130,14 @@ public class PostService : IPostService
         {
             return ServiceResponse.CreateNotFound();
         }
+
         if (!post.User.ExternalId.Equals(_accessor.GetUserId(), StringComparison.OrdinalIgnoreCase))
         {
             return ServiceResponse.CreateForbidden(Messages.OnlyOwner);
         }
 
         (List<int> ids, List<string> names) = request.SplitTags();
-        List<Topic> topics = new(names.Select(x => new Topic
-        {
-            Name = x,
-            NormalizedName = x.ToUpper()
-        }));
+        List<Topic> topics = new(names.Select(name => new Topic(name)));
         if (ids.Count > 0)
         {
             List<Topic> existingTopics = await _topicRepository.GetAsync(ids);
@@ -159,12 +147,11 @@ public class PostService : IPostService
                 string[] fieldNames = request.GetFieldsByIds(ids);
                 return ServiceResponse.CreateNotFound(Messages.NotFound, fieldNames);
             }
+
             topics.AddRange(existingTopics);
         }
 
-        post.Content = request.Content;
-        post.Title = request.Title;
-        post.Topics = topics;
+        post.Update(request.Title, request.Content, topics);
         await _repository.UpdateAndSaveAsync(post);
 
         return ServiceResponse.CreateOk();
@@ -177,6 +164,7 @@ public class PostService : IPostService
         {
             return ServiceResponse.CreateNotFound();
         }
+
         if (!post.User.ExternalId.Equals(_accessor.GetUserId(), StringComparison.OrdinalIgnoreCase))
         {
             return ServiceResponse.CreateForbidden(Messages.OnlyOwner);

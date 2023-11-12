@@ -4,7 +4,7 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Sonab.WebAPI.Contexts;
-using Sonab.WebAPI.Extentions.Program;
+using Sonab.WebAPI.Extensions.Program;
 using Sonab.WebAPI.Hubs;
 
 const string allowOrigins = "_allowOrigins";

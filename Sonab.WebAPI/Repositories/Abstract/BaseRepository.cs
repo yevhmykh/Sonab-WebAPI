@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Sonab.Core.Entities;
 using Sonab.WebAPI.Contexts;
-using Sonab.WebAPI.Models.DB;
 
 namespace Sonab.WebAPI.Repositories.Abstract;
 

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
+using Sonab.Core.Entities;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Models.Subscriptions;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services;
@@ -12,7 +12,7 @@ public class SubsriptionServiceTests : BaseServiceSetup
 {
     private readonly Mock<ISubscriptionRepository> _mockRepository = new();
     private readonly Mock<IUserRepository> _mockUserRepository = new();
-    private readonly SubsriptionService _service;
+    private readonly SubscriptionService _service;
 
     public SubsriptionServiceTests()
     {
@@ -22,7 +22,7 @@ public class SubsriptionServiceTests : BaseServiceSetup
             .ReturnsAsync(true);
 
         _service = new(
-            Mock.Of<ILogger<SubsriptionService>>(),
+            Mock.Of<ILogger<SubscriptionService>>(),
             _mockAccessor.Object,
             _mockRepository.Object,
             _mockUserRepository.Object);
@@ -57,12 +57,12 @@ public class SubsriptionServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockUserRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
-            .ReturnsAsync(new User()
+            .ReturnsAsync(new User("", "", "")
             {
                 Id = 1
             });
         _mockUserRepository.Setup(x => x.GetByIdAsync(It.Is<int>(y => y == 2)))
-            .ReturnsAsync(new User
+            .ReturnsAsync(new User("", "", "")
             {
                 Id = 2
             });
@@ -98,7 +98,7 @@ public class SubsriptionServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockUserRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
-            .ReturnsAsync(new User()
+            .ReturnsAsync(new User("", "", "")
             {
                 Id = 1
             });
@@ -118,12 +118,12 @@ public class SubsriptionServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockUserRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
-            .ReturnsAsync(new User()
+            .ReturnsAsync(new User("", "", "")
             {
                 Id = 1
             });
         _mockUserRepository.Setup(x => x.GetByIdAsync(It.Is<int>(y => y == 2)))
-            .ReturnsAsync(new User
+            .ReturnsAsync(new User("", "", "")
             {
                 Id = 2
             });
@@ -145,7 +145,7 @@ public class SubsriptionServiceTests : BaseServiceSetup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetSubscriptionAsync(
             It.Is<string>(y => y == "USER1"),
-            It.Is<int>(y => y == 2))).ReturnsAsync(new UserSubscription());
+            It.Is<int>(y => y == 2))).ReturnsAsync(new UserSubscription(null, null));
 
         // Act
         ServiceResponse result = await _service.UnsubscribeAsync(2);

@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Sonab.WebAPI.Models;
 
-namespace Sonab.WebAPI.Extentions.Program;
+namespace Sonab.WebAPI.Extensions.Program;
 
-public static class ExceptionHandlerExtentions
+public static class ExceptionHandlerExtensions
 {
     public static IApplicationBuilder UseSonabExceptionHandler(this IApplicationBuilder app) => app.UseExceptionHandler(builder =>
     {

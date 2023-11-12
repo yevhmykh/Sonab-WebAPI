@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
+using Sonab.Core.Entities;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Models.Posts;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services;
@@ -45,9 +45,9 @@ public class PostServiceTests : BaseServiceSetup
                 new PostShortInfo()
             });
         _mockRepository.Setup(x => x.GetUserPostsAsync(
-            It.Is<string>(y => y == "USER1"),
-            It.IsAny<PostListParams>())
-        )
+                It.Is<string>(y => y == "USER1"),
+                It.IsAny<PostListParams>())
+            )
             .ReturnsAsync(new List<PostShortInfo>
             {
                 new PostShortInfo(),
@@ -73,9 +73,9 @@ public class PostServiceTests : BaseServiceSetup
         _mockRepository.Setup(x => x.CountAsync(It.IsAny<PostCountParams>()))
             .ReturnsAsync(5);
         _mockRepository.Setup(x => x.CountPublishersPostAsync(
-            It.Is<string>(y => y == "USER1"),
-            It.IsAny<PostCountParams>())
-        )
+                It.Is<string>(y => y == "USER1"),
+                It.IsAny<PostCountParams>())
+            )
             .ReturnsAsync(3);
 
         // Act
@@ -93,11 +93,7 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User(),
-                Topics = new()
-            });
+            .ReturnsAsync(new Post("", "", EmptyUser, new List<Topic>()));
         _mockSubscriptionRepository.Setup(x => x.IsSubscribedAsync(
             It.IsAny<User>(),
             It.Is<string>(y => y == "USER1"))).ReturnsAsync(false);
@@ -118,11 +114,7 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId(null);
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User(),
-                Topics = new()
-            });
+            .ReturnsAsync(new Post("", "", EmptyUser, new()));
 
         // Act
         ServiceResponse result = await _service.GetByIdAsync(1);
@@ -140,14 +132,7 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User
-                {
-                    ExternalId = "USER1"
-                },
-                Topics = new()
-            });
+            .ReturnsAsync(new Post("", "", new User("USER1", "", ""), new List<Topic>()));
 
         // Act
         ServiceResponse result = await _service.GetByIdAsync(1);
@@ -165,11 +150,7 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User(),
-                Topics = new()
-            });
+            .ReturnsAsync(new Post("", "", EmptyUser, new List<Topic>()));
         _mockSubscriptionRepository.Setup(x => x.IsSubscribedAsync(
             It.IsAny<User>(),
             It.Is<string>(y => y == "USER1"))).ReturnsAsync(true);
@@ -207,7 +188,7 @@ public class PostServiceTests : BaseServiceSetup
         int savedTagCount = 0;
         SetUserId("user1");
         _mockUserRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
-            .ReturnsAsync(new User());
+            .ReturnsAsync(EmptyUser);
         _mockRepository.Setup(x => x.AddAndSaveAsync(It.IsAny<Post>()))
             .Callback<Post>((p) =>
             {
@@ -216,7 +197,7 @@ public class PostServiceTests : BaseServiceSetup
             })
             .ReturnsAsync(true);
         _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
-            .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic
+            .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic(null)
             {
                 Id = y
             }).ToList());
@@ -257,10 +238,10 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockUserRepository.Setup(x => x.GetByExternalIdAsync(It.Is<string>(y => y == "USER1")))
-            .ReturnsAsync(new User());
+            .ReturnsAsync(EmptyUser);
         _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
             .ReturnsAsync((IEnumerable<int> x) => x
-                .Where(y => existing.Contains(y)).Select(y => new Topic
+                .Where(y => existing.Contains(y)).Select(y => new Topic(null)
                 {
                     Id = y
                 }).ToList());
@@ -281,13 +262,7 @@ public class PostServiceTests : BaseServiceSetup
         int savedTagCount = 0;
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User
-                {
-                    ExternalId = "USER1"
-                }
-            });
+            .ReturnsAsync(new Post("", "", new User("USER1", "", ""), new List<Topic>()));
         bool updated = false;
         _mockRepository.Setup(x => x.UpdateAndSaveAsync(It.IsAny<Post>()))
             .Callback<Post>((p) =>
@@ -297,7 +272,7 @@ public class PostServiceTests : BaseServiceSetup
             })
             .ReturnsAsync(true);
         _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
-            .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic
+            .ReturnsAsync((IEnumerable<int> x) => x.Select(y => new Topic(null)
             {
                 Id = y
             }).ToList());
@@ -332,13 +307,7 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User
-                {
-                    ExternalId = "USER2"
-                }
-            });
+            .ReturnsAsync(new Post("", "", new User("USER2", "", ""), new List<Topic>()));
         bool updated = false;
         _mockRepository.Setup(x => x.UpdateAndSaveAsync(It.IsAny<Post>()))
             .Callback(() => updated = true)
@@ -364,16 +333,10 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User
-                {
-                    ExternalId = "USER1"
-                }
-            });
+            .ReturnsAsync(new Post("", "", new User("USER1", "", ""), new List<Topic>()));
         _mockTopicRepository.Setup(x => x.GetAsync(It.IsAny<IEnumerable<int>>()))
             .ReturnsAsync((IEnumerable<int> x) => x
-                .Where(y => existing.Contains(y)).Select(y => new Topic
+                .Where(y => existing.Contains(y)).Select(y => new Topic(null)
                 {
                     Id = y
                 }).ToList());
@@ -392,13 +355,7 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User
-                {
-                    ExternalId = "USER1"
-                }
-            });
+            .ReturnsAsync(new Post("", "", new User("USER1", "", ""), new List<Topic>()));
         bool deleted = false;
         _mockRepository.Setup(x => x.DeleteAndSaveAsync(It.IsAny<Post>()))
             .Callback(() => deleted = true)
@@ -433,13 +390,7 @@ public class PostServiceTests : BaseServiceSetup
         // Setup
         SetUserId("user1");
         _mockRepository.Setup(x => x.GetFullInfoAsync(It.Is<int>(y => y == 1)))
-            .ReturnsAsync(new Post
-            {
-                User = new User
-                {
-                    ExternalId = "USER2"
-                }
-            });
+            .ReturnsAsync(new Post("", "", new User("USER2", "", ""), new List<Topic>()));
         bool deleted = false;
         _mockRepository.Setup(x => x.DeleteAndSaveAsync(It.IsAny<Post>()))
             .Callback(() => deleted = true)
@@ -453,6 +404,8 @@ public class PostServiceTests : BaseServiceSetup
         Assert.Contains(Messages.OnlyOwner, result.Messages.Errors["Error"]);
         Assert.False(deleted);
     }
+
+    private static User EmptyUser => new("", "", "");
 
     public static IEnumerable<object[]> RequestsWithStoredTags => new List<object[]>
     {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sonab.WebAPI.Extentions;
+using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Services.Abstract;
 
 namespace Sonab.WebAPI.Controllers;

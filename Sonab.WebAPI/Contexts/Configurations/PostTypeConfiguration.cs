@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sonab.WebAPI.Models.DB;
+using Sonab.Core.Entities;
 
 namespace Sonab.WebAPI.Contexts.Configurations;
 

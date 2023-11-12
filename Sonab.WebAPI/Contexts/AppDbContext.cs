@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Sonab.WebAPI.Models.DB;
+using Sonab.Core.Entities;
 
 namespace Sonab.WebAPI.Contexts;
 

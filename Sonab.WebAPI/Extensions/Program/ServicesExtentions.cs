@@ -10,7 +10,7 @@ using Sonab.WebAPI.Utils.Abstact;
 using Sonab.WebAPI.Utils.Queue;
 using Sonab.WebAPI.Utils.RequestClients;
 
-namespace Sonab.WebAPI.Extentions.Program;
+namespace Sonab.WebAPI.Extensions.Program;
 
 public static class ServicesExtentions
 {
@@ -47,7 +47,7 @@ public static class ServicesExtentions
     public static IServiceCollection AddMainServices(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<ISubsriptionService, SubsriptionService>();
+        services.AddScoped<ISubsriptionService, SubscriptionService>();
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<ITopicService, TopicService>();
 

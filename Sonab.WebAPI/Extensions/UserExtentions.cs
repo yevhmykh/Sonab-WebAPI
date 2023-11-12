@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Sonab.WebAPI.Extentions;
+namespace Sonab.WebAPI.Extensions;
 
 public static class UserExtentions
 {

@@ -1,21 +1,21 @@
-using Sonab.WebAPI.Extentions;
+using Sonab.Core.Entities;
+using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Models.Subscriptions;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 
 namespace Sonab.WebAPI.Services;
 
-public class SubsriptionService : ISubsriptionService
+public class SubscriptionService : ISubsriptionService
 {
-    private readonly ILogger<SubsriptionService> _logger;
+    private readonly ILogger<SubscriptionService> _logger;
     private readonly IHttpContextAccessor _accessor;
     private readonly ISubscriptionRepository _repository;
     private readonly IUserRepository _userRepository;
 
-    public SubsriptionService(
-        ILogger<SubsriptionService> logger,
+    public SubscriptionService(
+        ILogger<SubscriptionService> logger,
         IHttpContextAccessor accessor,
         ISubscriptionRepository repository,
         IUserRepository userRepository)
@@ -48,11 +48,7 @@ public class SubsriptionService : ISubsriptionService
             return ServiceResponse.CreateNotFound();
         }
 
-        UserSubscription subscription = new()
-        {
-            User = subscriber,
-            Publisher = publisher
-        };
+        UserSubscription subscription = new(subscriber, publisher);
         if (await _repository.IsExistsAsync(subscription))
         {
             return ServiceResponse.CreateConflict(Messages.AlreadySubscribed);

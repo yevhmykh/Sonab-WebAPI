@@ -1,10 +1,10 @@
 using System.Linq.Expressions;
+using Sonab.Core.Entities;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Models.DB;
 
-namespace Sonab.WebAPI.Extentions;
+namespace Sonab.WebAPI.Extensions;
 
-public static class QueryExtentions
+public static class QueryExtensions
 {
     public static IQueryable<TKey> ApplyParams<TKey>(
         this IQueryable<TKey> query,

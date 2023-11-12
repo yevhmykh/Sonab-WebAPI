@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Sonab.Core.Entities;
 using Sonab.WebAPI.Hubs;
 using Sonab.WebAPI.Models.Auth0Communication;
-using Sonab.WebAPI.Models.DB;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 using Sonab.WebAPI.Services.Background.Workers;
@@ -90,7 +90,9 @@ public class LoadInfoWorkerTests
         {
             await _worker.StartWork("aBc123", new CancellationToken());
         }
-        catch { }
+        catch
+        {
+        }
 
         // Assert
         Assert.True(sent);
@@ -100,11 +102,7 @@ public class LoadInfoWorkerTests
     public async Task RefreshName()
     {
         // Setup
-        User user = new()
-        {
-            Name = "Neet",
-            ExternalId = "ABC123"
-        };
+        User user = new("Neet", "", "ABC123");
         _mockUserRepository.Setup(x => x.GetByEmailAsync(It.Is<string>(y => y.ToUpper() == "S@S.S")))
             .ReturnsAsync(user);
         _mockAuth0Service.Setup(x => x.GetUserInfoAsync(It.IsAny<string>()))
@@ -127,11 +125,7 @@ public class LoadInfoWorkerTests
     public async Task RefreshExternalId()
     {
         // Setup
-        User user = new()
-        {
-            Name = "Weaboo",
-            ExternalId = "Auth0|123"
-        };
+        User user = new("Weaboo", "", "Auth0|123");
         _mockUserRepository.Setup(x => x.GetByEmailAsync(It.Is<string>(y => y.ToUpper() == "S@S.S")))
             .ReturnsAsync(user);
         _mockAuth0Service.Setup(x => x.GetUserInfoAsync(It.IsAny<string>()))
