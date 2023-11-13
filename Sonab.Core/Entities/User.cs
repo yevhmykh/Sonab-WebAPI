@@ -1,6 +1,6 @@
 namespace Sonab.Core.Entities;
 
-public class User : Key
+public class User : AggregateRoot
 { 
     public string ExternalId { get; protected set; }
     public string Email { get; protected set; }

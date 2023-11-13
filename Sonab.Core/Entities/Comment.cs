@@ -1,6 +1,6 @@
 namespace Sonab.Core.Entities;
 
-public class Comment : Key
+public class Comment : Entity
 {
     public string Content { get; protected set; }
     public bool IsEdited { get; protected set; }

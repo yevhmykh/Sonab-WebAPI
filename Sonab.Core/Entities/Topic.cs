@@ -1,6 +1,6 @@
 namespace Sonab.Core.Entities;
 
-public class Topic : Key
+public class Topic : AggregateRoot
 {
     public string Name { get; protected set; }
     public string NormalizedName { get; protected set; }

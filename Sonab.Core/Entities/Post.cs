@@ -1,6 +1,8 @@
+using Sonab.Core.Interfaces;
+
 namespace Sonab.Core.Entities;
 
-public class Post : Key
+public class Post : AggregateRoot
 {
     public string Title { get; protected set; }
     public string Content { get; protected set; }

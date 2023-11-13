@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Sonab.WebAPI.Contexts;
+using Sonab.DbRepositories.Contexts;
 using Sonab.WebAPI.Extensions.Program;
 using Sonab.WebAPI.Hubs;
 
@@ -29,7 +29,7 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddUtils();
 builder.Services.AddRepositories();
-builder.Services.AddSubServices();
+builder.Services.AddSubServices(builder.Configuration);
 builder.Services.AddMainServices();
 
 builder.Services.AddCors(options =>

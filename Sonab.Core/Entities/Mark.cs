@@ -1,6 +1,6 @@
 namespace Sonab.Core.Entities;
 
-public class Mark : Key
+public class Mark : Entity
 {
     public int Value { get; protected set; }
     public int PostId { get; protected set; }

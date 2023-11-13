@@ -1,3 +1,5 @@
+using Sonab.Core.Interfaces.Repositories;
+using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Enums;
 using Sonab.WebAPI.Models.Jobs;
 using Sonab.WebAPI.Repositories.Abstract;

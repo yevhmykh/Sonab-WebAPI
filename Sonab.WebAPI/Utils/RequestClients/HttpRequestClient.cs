@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Sonab.Core.Interfaces.Services;
 using Sonab.WebAPI.Utils.Abstact;
 
 namespace Sonab.WebAPI.Utils.RequestClients;

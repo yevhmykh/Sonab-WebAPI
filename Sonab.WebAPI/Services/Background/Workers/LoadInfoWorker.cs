@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.SignalR;
+using Sonab.Core.Constants;
 using Sonab.Core.Entities;
+using Sonab.Core.Interfaces.Repositories;
+using Sonab.Core.Interfaces.Repositories.ReadEntity;
+using Sonab.Core.Interfaces.Services;
 using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Hubs;
 using Sonab.WebAPI.Models.Auth0Communication;
@@ -13,13 +17,13 @@ public sealed class LoadInfoWorker : ILoadInfoWorker
 {
     private readonly ILogger<LoadInfoWorker> _logger;
     private readonly IUserRepository _userRepository;
-    private readonly IAuth0CommunicationService _auth0Service;
+    private readonly IExternalAuthRepository _auth0Service;
     private readonly IHubContext<NotificationHub> _hub;
 
     public LoadInfoWorker(
         ILogger<LoadInfoWorker> logger,
         IUserRepository userRepository,
-        IAuth0CommunicationService auth0Service,
+        IExternalAuthRepository auth0Service,
         IHubContext<NotificationHub> hub)
     {
         _logger = logger;

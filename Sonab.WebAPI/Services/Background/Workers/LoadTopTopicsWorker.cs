@@ -1,5 +1,8 @@
 using Microsoft.Extensions.Caching.Memory;
-using Sonab.WebAPI.Models.Posts;
+using Sonab.Core.Constants;
+using Sonab.Core.Dto.Posts;
+using Sonab.Core.Interfaces.Repositories;
+using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Background.Workers.Abstract;
 

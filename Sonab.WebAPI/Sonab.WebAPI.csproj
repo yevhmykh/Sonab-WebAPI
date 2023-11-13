@@ -18,6 +18,8 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\Sonab.Auth0Client\Sonab.Auth0Client.csproj" />
 	  <ProjectReference Include="..\Sonab.Core\Sonab.Core.csproj" />
+	  <ProjectReference Include="..\Sonab.DbRepositories\Sonab.DbRepositories.csproj" />
 	</ItemGroup>
 </Project>

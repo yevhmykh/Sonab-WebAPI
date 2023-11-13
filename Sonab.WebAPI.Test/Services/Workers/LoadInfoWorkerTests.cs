@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Sonab.Core.Entities;
+using Sonab.Core.Interfaces.Repositories;
+using Sonab.Core.Interfaces.Repositories.ReadEntity;
+using Sonab.Core.Interfaces.Services;
 using Sonab.WebAPI.Hubs;
 using Sonab.WebAPI.Models.Auth0Communication;
 using Sonab.WebAPI.Repositories.Abstract;
@@ -12,7 +15,7 @@ namespace Sonab.WebAPI.Test.Services.Workers;
 public class LoadInfoWorkerTests
 {
     private readonly Mock<IUserRepository> _mockUserRepository = new();
-    private readonly Mock<IAuth0CommunicationService> _mockAuth0Service = new();
+    private readonly Mock<IExternalAuthRepository> _mockAuth0Service = new();
     private readonly Mock<IHubClients> _mockClients = new();
     private readonly IClientProxy _clientProxy;
     private readonly LoadInfoWorker _worker;
