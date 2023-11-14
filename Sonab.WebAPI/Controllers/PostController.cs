@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sonab.Core.Constants;
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.Posts.Requests;
 using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Services.Abstract;
 

@@ -1,4 +1,4 @@
-using Sonab.Core.Dto.Subscriptions;
+using Sonab.Core.Dto.Users.Subscriptions;
 using Sonab.Core.Entities;
 
 namespace Sonab.Core.Interfaces.Repositories.ReadEntity;

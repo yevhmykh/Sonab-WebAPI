@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Sonab.Core.Constants;
-using Sonab.Core.Dto.Subscriptions;
+using Sonab.Core.Dto.Users.Subscriptions;
 using Sonab.Core.Entities;
 using Sonab.Core.Interfaces.Repositories;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;

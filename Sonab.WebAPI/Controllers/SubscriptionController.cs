@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sonab.Core.Dto.Subscriptions;
+using Sonab.Core.Dto.Users.Subscriptions;
 using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Services.Abstract;
 

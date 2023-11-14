@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Sonab.Core.Dto.Subscriptions;
+using Sonab.Core.Dto.Users.Subscriptions;
 using Sonab.Core.Entities;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.DbRepositories.Contexts;

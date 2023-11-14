@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.Posts.Requests;
 using Sonab.WebAPI.Controllers;
 using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Services.Abstract;

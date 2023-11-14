@@ -1,15 +1,14 @@
 using Sonab.Core.Constants;
-using Sonab.Core.Dto.Subscriptions;
+using Sonab.Core.Dto.Users.Subscriptions;
 using Sonab.Core.Entities;
-using Sonab.Core.Interfaces.Repositories;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 
 namespace Sonab.WebAPI.Services;
 
+[Obsolete]
 public class SubscriptionService : ISubsriptionService
 {
     private readonly ILogger<SubscriptionService> _logger;

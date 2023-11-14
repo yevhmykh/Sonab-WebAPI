@@ -1,5 +1,6 @@
 using Sonab.Core.Constants;
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.Posts.Requests;
 using Sonab.Core.Entities;
 using Sonab.Core.Interfaces.Repositories;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;

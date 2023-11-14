@@ -1,4 +1,4 @@
-namespace Sonab.Core.Dto.Subscriptions;
+namespace Sonab.Core.Dto.Users.Subscriptions;
 
 public class SubscriptionFullInfo
 {

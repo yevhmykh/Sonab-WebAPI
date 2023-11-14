@@ -1,4 +1,5 @@
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.Posts.Requests;
 using Sonab.WebAPI.Models;
 
 namespace Sonab.WebAPI.Services.Abstract;

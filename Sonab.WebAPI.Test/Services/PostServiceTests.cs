@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Sonab.Core.Constants;
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.Posts.Requests;
 using Sonab.Core.Entities;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Models;

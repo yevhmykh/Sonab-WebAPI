@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Sonab.Core.Entities;
 using Sonab.Core.Interfaces.Repositories;
@@ -17,6 +18,9 @@ public sealed class DbRepository<TRoot> : IRepository<TRoot> where TRoot : Aggre
     public Task<List<TRoot>> GetAsync() => _context.Set<TRoot>().ToListAsync();
 
     public Task<TRoot> GetByIdAsync(int id) => _context.Set<TRoot>().FirstOrDefaultAsync(root => root.Id == id);
+
+    public Task<TRoot> GetByAsync(Expression<Func<TRoot, bool>> condition) =>
+        _context.Set<TRoot>().FirstOrDefaultAsync(condition);
 
     public Task<List<TRoot>> GetByIdsAsync(IEnumerable<int> ids) =>
         _context.Set<TRoot>().Where(root => ids.Contains(root.Id)).ToListAsync();
