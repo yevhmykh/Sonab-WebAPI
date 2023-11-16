@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.TopicTags;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Services;

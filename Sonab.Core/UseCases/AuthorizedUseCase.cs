@@ -13,6 +13,6 @@ public abstract class AuthorizedUseCase<TRequest, TResponse> : IUseCase<TRequest
             ? presenter.HandleFailure(UserError.Unauthorized())
             : Handle(loggedInUser.ExternalId.ToUpper(), request, presenter);
 
-    // Maybe should be User entity or DTO...
+    // TODO: Maybe should be User entity or DTO... Yes, need(-_-)
     protected abstract Task Handle(string userExternalId, TRequest request, IPresenter<TResponse> presenter);
 }

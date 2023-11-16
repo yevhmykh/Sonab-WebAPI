@@ -1,16 +1,17 @@
 using System.ComponentModel.DataAnnotations;
-using Sonab.Core.Constants;
+using Sonab.Core.Dto.TopicTags;
+using Sonab.Core.Entities;
 
-namespace Sonab.Core.Dto.Posts.Requests;
+namespace Sonab.WebAPI.Models;
 
 public class EditRequest
 {
     [Required]
-    [MinLength(Limits.TitleMinLength)]
-    [MaxLength(Limits.TitleMaxLength)]
+    [MinLength(Post.TitleMinLength)]
+    [MaxLength(Post.TitleMaxLength)]
     public string Title { get; set; }
     [Required]
-    [MinLength(Limits.ContentMinLength)]
+    [MinLength(Post.ContentMinLength)]
     public string Content { get; set; }
     public TopicTag[] Tags { get; set; }
 

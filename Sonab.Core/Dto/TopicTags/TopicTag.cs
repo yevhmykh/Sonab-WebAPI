@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Sonab.Core.Constants;
 
-namespace Sonab.Core.Dto.Posts;
+namespace Sonab.Core.Dto.TopicTags;
 
 public class TopicTag
 {

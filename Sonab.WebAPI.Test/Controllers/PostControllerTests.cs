@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sonab.Core.Dto.Posts;
 using Sonab.Core.Dto.Posts.Requests;
+using Sonab.Core.Dto.TopicTags;
 using Sonab.WebAPI.Controllers;
 using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Services.Abstract;
@@ -30,20 +31,20 @@ public class PostControllerTests
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
         _mockService.Setup(x => x.GetListAsync(
-            It.Is<SearchType>(y => y == SearchType.All),
+            It.Is<PostSearchType>(y => y == PostSearchType.All),
             It.IsAny<PostListParams>())).ReturnsAsync(ServiceResponse.CreateOk(new object()));
 
         // Act
-        IActionResult result = await _controller.GetAsync(SearchType.All, new());
+        IActionResult result = await _controller.GetAsync(PostSearchType.All, new());
 
         // Assert
         Assert.IsType<OkObjectResult>(result);
     }
 
     [Theory]
-    [InlineData(SearchType.User)]
-    [InlineData(SearchType.Publishers)]
-    public async Task Get_Unauthorized(SearchType searchType)
+    [InlineData(PostSearchType.User)]
+    [InlineData(PostSearchType.Publishers)]
+    public async Task Get_Unauthorized(PostSearchType searchType)
     {
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
@@ -56,15 +57,15 @@ public class PostControllerTests
     }
 
     [Theory]
-    [InlineData(SearchType.All)]
-    [InlineData(SearchType.User)]
-    [InlineData(SearchType.Publishers)]
-    public async Task Get_Authorized(SearchType searchType)
+    [InlineData(PostSearchType.All)]
+    [InlineData(PostSearchType.User)]
+    [InlineData(PostSearchType.Publishers)]
+    public async Task Get_Authorized(PostSearchType searchType)
     {
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(true);
         _mockService.Setup(x => x.GetListAsync(
-            It.Is<SearchType>(y => y == searchType),
+            It.Is<PostSearchType>(y => y == searchType),
             It.IsAny<PostListParams>())
         )
             .ReturnsAsync(ServiceResponse.CreateOk(new object()));
@@ -82,22 +83,22 @@ public class PostControllerTests
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
         _mockService.Setup(x => x.CountAsync(
-            It.Is<SearchType>(y => y == SearchType.All),
+            It.Is<PostSearchType>(y => y == PostSearchType.All),
             It.IsAny<PostCountParams>())
         )
             .ReturnsAsync(ServiceResponse.CreateOk(1));
 
         // Act
-        IActionResult result = await _controller.CountAsync(SearchType.All, new());
+        IActionResult result = await _controller.CountAsync(PostSearchType.All, new());
 
         // Assert
         Assert.IsType<OkObjectResult>(result);
     }
 
     [Theory]
-    [InlineData(SearchType.User)]
-    [InlineData(SearchType.Publishers)]
-    public async Task Count_Unauthorized(SearchType searchType)
+    [InlineData(PostSearchType.User)]
+    [InlineData(PostSearchType.Publishers)]
+    public async Task Count_Unauthorized(PostSearchType searchType)
     {
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
@@ -110,15 +111,15 @@ public class PostControllerTests
     }
 
     [Theory]
-    [InlineData(SearchType.All)]
-    [InlineData(SearchType.User)]
-    [InlineData(SearchType.Publishers)]
-    public async Task Count_Authorized(SearchType searchType)
+    [InlineData(PostSearchType.All)]
+    [InlineData(PostSearchType.User)]
+    [InlineData(PostSearchType.Publishers)]
+    public async Task Count_Authorized(PostSearchType searchType)
     {
         // Setup
         _mockContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(true);
         _mockService.Setup(x => x.CountAsync(
-            It.Is<SearchType>(y => y == searchType),
+            It.Is<PostSearchType>(y => y == searchType),
             It.IsAny<PostCountParams>())
         )
             .ReturnsAsync(ServiceResponse.CreateOk(new object()));

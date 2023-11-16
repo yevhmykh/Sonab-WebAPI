@@ -1,4 +1,4 @@
-namespace Sonab.Core.Dto.Posts;
+namespace Sonab.Core.Dto.Posts.Requests;
 
 public sealed class PostListParams : ListParams
 {

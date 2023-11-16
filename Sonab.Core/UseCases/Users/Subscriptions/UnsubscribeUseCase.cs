@@ -28,6 +28,7 @@ public class UnsubscribeUseCase : AuthorizedUseCase<UnsubscribeRequest, OkRespon
         if (!user.TryRemoveSubscription(request.PublisherId, out UserError error))
         {
             await presenter.HandleFailure(error);
+            return;
         }
 
         await _userRepository.UpdateAsync(user);

@@ -28,11 +28,13 @@ public class SubscribeUseCase : AuthorizedUseCase<SubscribeRequest, OkResponse>
         if (publisher == null)
         {
             await presenter.HandleFailure(UserError.NotFound());
+            return;
         }
 
         if (!user.TryAddSubscription(publisher, out UserError error))
         {
             await presenter.HandleFailure(error);
+            return;
         }
 
         await _userRepository.UpdateAsync(user);

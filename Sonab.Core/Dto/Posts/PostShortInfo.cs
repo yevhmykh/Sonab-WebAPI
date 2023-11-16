@@ -1,3 +1,5 @@
+using Sonab.Core.Dto.TopicTags;
+
 namespace Sonab.Core.Dto.Posts;
 
 public class PostShortInfo

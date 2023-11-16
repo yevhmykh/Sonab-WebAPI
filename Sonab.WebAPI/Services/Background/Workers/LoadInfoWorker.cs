@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.SignalR;
 using Sonab.Core.Constants;
+using Sonab.Core.Dto.Users;
 using Sonab.Core.Entities;
-using Sonab.Core.Interfaces.Repositories;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.Core.Interfaces.Services;
 using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Hubs;
-using Sonab.WebAPI.Models.Auth0Communication;
-using Sonab.WebAPI.Repositories.Abstract;
-using Sonab.WebAPI.Services.Abstract;
 using Sonab.WebAPI.Services.Background.Workers.Abstract;
 
 namespace Sonab.WebAPI.Services.Background.Workers;

@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Sonab.Core.Constants;
 using Sonab.Core.Dto.Posts;
 using Sonab.Core.Dto.Posts.Requests;
+using Sonab.Core.Dto.TopicTags;
 using Sonab.Core.Entities;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Models;
@@ -56,8 +57,8 @@ public class PostServiceTests : BaseServiceSetup
             });
 
         // Act
-        ServiceResponse result1 = await _service.GetListAsync(SearchType.All, new());
-        ServiceResponse result2 = await _service.GetListAsync(SearchType.User, new());
+        ServiceResponse result1 = await _service.GetListAsync(PostSearchType.All, new());
+        ServiceResponse result2 = await _service.GetListAsync(PostSearchType.User, new());
 
         // Assert
         Assert.True(result1.TryGetData(out List<PostShortInfo> data1));
@@ -80,8 +81,8 @@ public class PostServiceTests : BaseServiceSetup
             .ReturnsAsync(3);
 
         // Act
-        ServiceResponse result1 = await _service.CountAsync(SearchType.All, new());
-        ServiceResponse result2 = await _service.CountAsync(SearchType.Publishers, new());
+        ServiceResponse result1 = await _service.CountAsync(PostSearchType.All, new());
+        ServiceResponse result2 = await _service.CountAsync(PostSearchType.Publishers, new());
 
         // Assert
         Assert.Equal(5, (int)result1.Data);

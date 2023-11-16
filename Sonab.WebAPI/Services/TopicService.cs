@@ -1,14 +1,13 @@
 using Microsoft.Extensions.Caching.Memory;
 using Sonab.Core.Constants;
-using Sonab.Core.Dto.Posts;
-using Sonab.Core.Interfaces.Repositories;
+using Sonab.Core.Dto.TopicTags;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 
 namespace Sonab.WebAPI.Services;
 
+[Obsolete]
 public class TopicService : ITopicService
 {
     private readonly ILogger<TopicService> _logger;

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.TopicTags;
 using Sonab.WebAPI.Models;
 using Sonab.WebAPI.Services.Abstract;
 

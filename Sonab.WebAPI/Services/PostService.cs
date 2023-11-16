@@ -1,12 +1,11 @@
 using Sonab.Core.Constants;
 using Sonab.Core.Dto.Posts;
 using Sonab.Core.Dto.Posts.Requests;
+using Sonab.Core.Dto.TopicTags;
 using Sonab.Core.Entities;
-using Sonab.Core.Interfaces.Repositories;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
 using Sonab.WebAPI.Extensions;
 using Sonab.WebAPI.Models;
-using Sonab.WebAPI.Repositories.Abstract;
 using Sonab.WebAPI.Services.Abstract;
 
 namespace Sonab.WebAPI.Services;
@@ -36,28 +35,28 @@ public class PostService : IPostService
         _topicRepository = topicRepository;
     }
 
-    public async Task<ServiceResponse> GetListAsync(SearchType search, PostListParams listParams)
+    public async Task<ServiceResponse> GetListAsync(PostSearchType search, PostListParams listParams)
     {
         List<PostShortInfo> result = search switch
         {
-            SearchType.All => await _repository.GetAsync(listParams),
-            SearchType.User => await _repository
+            PostSearchType.All => await _repository.GetAsync(listParams),
+            PostSearchType.User => await _repository
                 .GetUserPostsAsync(_accessor.GetUserId(), listParams),
-            SearchType.Publishers => await _repository
+            PostSearchType.Publishers => await _repository
                 .GetPublishersPostsAsync(_accessor.GetUserId(), listParams),
             _ => throw new ArgumentException("Invalid search type")
         };
         return ServiceResponse.CreateOk(result);
     }
 
-    public async Task<ServiceResponse> CountAsync(SearchType search, PostCountParams countParams)
+    public async Task<ServiceResponse> CountAsync(PostSearchType search, PostCountParams countParams)
     {
         int result = search switch
         {
-            SearchType.All => await _repository.CountAsync(countParams),
-            SearchType.User => await _repository
+            PostSearchType.All => await _repository.CountAsync(countParams),
+            PostSearchType.User => await _repository
                 .CountUserPostAsync(_accessor.GetUserId(), countParams),
-            SearchType.Publishers => await _repository
+            PostSearchType.Publishers => await _repository
                 .CountPublishersPostAsync(_accessor.GetUserId(), countParams),
             _ => throw new ArgumentException("Invalid search type")
         };
@@ -155,7 +154,7 @@ public class PostService : IPostService
             topics.AddRange(existingTopics);
         }
 
-        post.Update(request.Title, request.Content, topics);
+        post.TryUpdate(request.Title, request.Content, topics);
         await _repository.UpdateAndSaveAsync(post);
 
         return ServiceResponse.CreateOk();

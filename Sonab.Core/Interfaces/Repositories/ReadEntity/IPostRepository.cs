@@ -1,4 +1,5 @@
 using Sonab.Core.Dto.Posts;
+using Sonab.Core.Dto.Posts.Requests;
 using Sonab.Core.Entities;
 
 namespace Sonab.Core.Interfaces.Repositories.ReadEntity;

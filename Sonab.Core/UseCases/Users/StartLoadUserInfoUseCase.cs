@@ -4,11 +4,11 @@ using Sonab.Core.Interfaces;
 
 namespace Sonab.Core.UseCases.Users;
 
-public class LoadUserInfoUseCase : AuthorizedUseCase<LoadUserInfoRequest, OkResponse>
+public class StartLoadUserInfoUseCase : AuthorizedUseCase<StartLoadUserInfoRequest, OkResponse>
 {
     protected override Task Handle(
         string userExternalId,
-        LoadUserInfoRequest request,
+        StartLoadUserInfoRequest request,
         IPresenter<OkResponse> presenter)
     {
         throw new NotImplementedException("Need refactored background worker");

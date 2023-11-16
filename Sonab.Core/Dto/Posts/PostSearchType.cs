@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Sonab.Core.Dto.Posts;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum SearchType
+public enum PostSearchType
 {
     [EnumMember(Value = "all")]
     All = 0,
