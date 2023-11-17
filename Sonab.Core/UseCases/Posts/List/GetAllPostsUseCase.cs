@@ -9,7 +9,7 @@ using Sonab.Core.Interfaces.Repositories.ReadEntity;
 
 namespace Sonab.Core.UseCases.Posts.List;
 
-public class GetAllPostsUseCase : IUseCase<GetAllPostsRequest, GetPostListResponse>
+public class GetAllPostsUseCase : IUseCase<GetPostListRequest, GetPostListResponse>
 {
     private readonly IPostRepository _repository;
 
@@ -20,7 +20,7 @@ public class GetAllPostsUseCase : IUseCase<GetAllPostsRequest, GetPostListRespon
 
     public async Task Handle(
         LoggedInUser loggedInUser,
-        GetAllPostsRequest request,
+        GetPostListRequest request,
         IPresenter<GetPostListResponse> presenter)
     {
         List<PostShortInfo> result = await _repository.GetAsync(request.ListParams);

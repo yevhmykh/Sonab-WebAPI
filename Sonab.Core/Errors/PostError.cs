@@ -18,7 +18,7 @@ public sealed class PostError : ErrorBase
 
     // TODO: Move out from class 
     public record NotFoundProblem(int Id) : Problem;
-    public record NotOwnerProblem() : Problem;
+    public record NotOwnerProblem : Problem;
     public record NotFoundTopicsProblem(List<int> Ids) : Problem;
     public record MinLenghtViolationProblem(string FieldName, int Expected) : Problem;
     public record MaxLenghtViolationProblem(string FieldName, int Expected) : Problem;

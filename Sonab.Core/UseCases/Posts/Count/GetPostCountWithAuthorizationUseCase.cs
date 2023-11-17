@@ -6,8 +6,7 @@ using Sonab.Core.Interfaces.Repositories.ReadEntity;
 
 namespace Sonab.Core.UseCases.Posts.Count;
 
-public abstract class GetPostCountWithAuthorizationUseCase<TRequest> : AuthorizedUseCase<TRequest, GetPostCountResponse>
-    where TRequest : GetPostCountRequest
+public abstract class GetPostCountWithAuthorizationUseCase : AuthorizedUseCase<GetPostCountRequest, GetPostCountResponse>
 {
     protected readonly IPostRepository Repository;
 
@@ -18,7 +17,7 @@ public abstract class GetPostCountWithAuthorizationUseCase<TRequest> : Authorize
 
     protected override async Task Handle(
         string userExternalId,
-        TRequest request,
+        GetPostCountRequest request,
         IPresenter<GetPostCountResponse> presenter)
     {
         int count = await GetPostCount(userExternalId, request.CountParams);

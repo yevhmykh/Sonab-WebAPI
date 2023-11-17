@@ -1,5 +1,4 @@
-using Sonab.WebAPI.Enums;
-using Sonab.WebAPI.Models.Jobs;
+using Sonab.Core.BackgroundTasks;
 using Sonab.WebAPI.Utils.Queue;
 
 namespace Sonab.WebAPI.Test.Utils;
@@ -10,14 +9,14 @@ public class QueueTests
     public async Task OneJob()
     {
         // Setup
-        BackgroundQueue backgroundQueue = new();
-        backgroundQueue.Enqueue(new JobInfo(JobType.LoadInfo, "1"));
+        BackgroundTaskQueue backgroundTaskQueue = new();
+        backgroundTaskQueue.Enqueue(new LoadUserInfoTask("1"));
 
         // Act
-        JobInfo result = await backgroundQueue.Dequeue();
+        BackgroundTask result = await backgroundTaskQueue.Dequeue();
 
         // Assert
-        Assert.Equal(JobType.LoadInfo, result.Type);
-        Assert.Equal("1", (string)result.Data);
+        Assert.IsType<LoadUserInfoTask>(result);
+        Assert.Equal("1", ((LoadUserInfoTask)result).ExternalUserId);
     }
 }

@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.SignalR;
+using Sonab.Core.BackgroundTasks;
 using Sonab.Core.Constants;
+using Sonab.Core.Dto;
 using Sonab.Core.Dto.Users;
-using Sonab.Core.Entities;
-using Sonab.Core.Interfaces.Repositories.ReadEntity;
+using Sonab.Core.Errors;
+using Sonab.Core.Interfaces;
 using Sonab.Core.Interfaces.Services;
-using Sonab.WebAPI.Extensions;
-using Sonab.WebAPI.Hubs;
+using Sonab.Core.UseCases.Users;
 using Sonab.WebAPI.Services.Background.Workers.Abstract;
 
 namespace Sonab.WebAPI.Services.Background.Workers;
@@ -13,58 +13,59 @@ namespace Sonab.WebAPI.Services.Background.Workers;
 public sealed class LoadInfoWorker : ILoadInfoWorker
 {
     private readonly ILogger<LoadInfoWorker> _logger;
-    private readonly IUserRepository _userRepository;
-    private readonly IExternalAuthRepository _auth0Service;
-    private readonly IHubContext<NotificationHub> _hub;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IExternalAuthRepository _externalAuthRepository;
+    private readonly INotificationSender _notificationSender;
 
     public LoadInfoWorker(
         ILogger<LoadInfoWorker> logger,
-        IUserRepository userRepository,
-        IExternalAuthRepository auth0Service,
-        IHubContext<NotificationHub> hub)
+        INotificationSender notificationSender,
+        IUnitOfWork unitOfWork,
+        IExternalAuthRepository externalAuthRepository)
     {
         _logger = logger;
-        _userRepository = userRepository;
-        _auth0Service = auth0Service;
-        _hub = hub;
+        _notificationSender = notificationSender;
+        _unitOfWork = unitOfWork;
+        _externalAuthRepository = externalAuthRepository;
     }
 
+    // TODO: object to BackgroundTask
     public async Task StartWork(object data, CancellationToken stoppingToken)
     {
+        LoadUserInfoTask task = (LoadUserInfoTask)data;
         try
         {
-            await LoadUserInfo((string)data, stoppingToken);
+            await LoadUserInfo(task.ExternalUserId, stoppingToken);
         }
         catch
         {
-            await _hub.Clients.User((string)data)
-                .SendErrorAsync(Messages.InfoNotLoaded);
+            await _notificationSender.SendErrorAsync(task.ExternalUserId, Messages.InfoNotLoaded);
             throw;
         }
     }
 
-    private async Task LoadUserInfo(string userId, CancellationToken stoppingToken)
+    private Task LoadUserInfo(string userId, CancellationToken stoppingToken)
     {
         _logger.LogInformation($"Loading info for user with ID: '{userId}'");
 
-        UserInfo info = await _auth0Service.GetUserInfoAsync(userId);
-        User user = await _userRepository.GetByEmailAsync(info.Email);
+        LoadUserInfoUseCase useCase = new(_unitOfWork, _externalAuthRepository);
+        return useCase.Handle(null, new LoadUserInfoRequest(userId), new OkPresenter(userId, _notificationSender));
+    }
+    
+    private class OkPresenter : IPresenter<OkResponse>
+    {
+        private readonly string _userId;
+        private readonly INotificationSender _notificationSender;
 
-        stoppingToken.ThrowIfCancellationRequested();
-
-        if (user == null)
+        public OkPresenter(string userId, INotificationSender notificationSender)
         {
-            user = new User(userId, info.Email, info.UserName);
-
-            await _userRepository.AddAndSaveAsync(user);
-            _logger.LogInformation($"Saved with ID: {user.Id}");
+            _userId = userId;
+            _notificationSender = notificationSender;
         }
-        else
-        {
-            user.UpdateIdentifiers(userId, info.UserName);
+        
+        public Task HandleSuccess(OkResponse response) => Task.CompletedTask;
 
-            await _userRepository.UpdateAndSaveAsync(user);
-            _logger.LogInformation($"Updated by ID: {user.Id}");
-        }
+        public Task HandleFailure(ErrorBase error) =>
+            _notificationSender.SendErrorAsync(_userId, Messages.InfoNotLoaded);
     }
 }

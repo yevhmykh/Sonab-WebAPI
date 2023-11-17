@@ -1,5 +1,7 @@
 namespace Sonab.WebAPI.Models;
 
+[Obsolete]
+// TODO: Move static creation methods to ErrorMessages
 public class ServiceResponse
 {
     private const string ServerErrrorMessage = "Unexpected server error. Please contact dev team";

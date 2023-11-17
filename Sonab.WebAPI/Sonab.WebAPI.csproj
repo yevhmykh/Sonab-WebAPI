@@ -22,4 +22,7 @@
 	  <ProjectReference Include="..\Sonab.Core\Sonab.Core.csproj" />
 	  <ProjectReference Include="..\Sonab.DbRepositories\Sonab.DbRepositories.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Utils\Abstract" />
+	</ItemGroup>
 </Project>

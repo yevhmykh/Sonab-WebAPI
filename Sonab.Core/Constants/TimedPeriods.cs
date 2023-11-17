@@ -6,7 +6,7 @@ namespace Sonab.Core.Constants;
 public static class TimedPeriods
 {
     /// <summary>
-    /// Base spare time for cache
+    /// Base spare time for data memory
     /// </summary>
     public const int Spare = 5;
 

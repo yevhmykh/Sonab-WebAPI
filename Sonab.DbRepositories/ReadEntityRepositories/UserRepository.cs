@@ -14,9 +14,6 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public Task<User> GetByEmailAsync(string email) =>
-        _context.Users.FirstOrDefaultAsync(x => x.Email == email.ToUpper());
-
     public Task<User> GetByExternalIdAsync(string externalId) =>
-        _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.ExternalId == externalId);
+        _context.Users.FirstOrDefaultAsync(x => x.ExternalId == externalId);
 }

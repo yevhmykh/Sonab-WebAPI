@@ -53,7 +53,7 @@ public class EditPostUseCase : AuthorizedUseCase<EditPostRequest, OkResponse>
             topics.AddRange(existingTopics);
         }
 
-        if (post.TryUpdate(request.Title, request.Content, topics, out PostError error))
+        if (!post.TryUpdate(request.Title, request.Content, topics, out PostError error))
         {
             await presenter.HandleFailure(error);
             return;

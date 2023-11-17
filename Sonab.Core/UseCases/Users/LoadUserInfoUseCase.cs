@@ -11,17 +11,13 @@ namespace Sonab.Core.UseCases.Users;
 // TODO: Add some validation to avoid non background worker
 public class LoadUserInfoUseCase : IUseCase<LoadUserInfoRequest, OkResponse>
 {
-    private readonly INotificationSender _notificationSender;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<User> _userRepository;
     private readonly IExternalAuthRepository _externalAuthRepository;
 
-    public LoadUserInfoUseCase(
-        INotificationSender notificationSender,
-        IUnitOfWork unitOfWork,
+    public LoadUserInfoUseCase(IUnitOfWork unitOfWork,
         IExternalAuthRepository externalAuthRepository)
     {
-        _notificationSender = notificationSender;
         _unitOfWork = unitOfWork;
         _userRepository = unitOfWork.GetRepository<User>();
         _externalAuthRepository = externalAuthRepository;
@@ -32,7 +28,7 @@ public class LoadUserInfoUseCase : IUseCase<LoadUserInfoRequest, OkResponse>
         UserInfo info = await _externalAuthRepository.GetUserInfoAsync(request.ExternalUserId);
         if (string.IsNullOrEmpty(info.UserName))
         {
-            await presenter.HandleFailure(UserError.NotFound());
+            await presenter.HandleFailure(UserError.NoInfo(request.ExternalUserId));
             return;
         }
         

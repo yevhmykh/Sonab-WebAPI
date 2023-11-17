@@ -8,8 +8,7 @@ using Sonab.Core.Interfaces.Repositories.ReadEntity;
 
 namespace Sonab.Core.UseCases.Posts.List;
 
-public abstract class GetPostsWithAuthorizationUseCase<TRequest> : AuthorizedUseCase<TRequest, GetPostListResponse>
-    where TRequest : GetPostListRequest
+public abstract class GetPostsWithAuthorizationUseCase : AuthorizedUseCase<GetPostListRequest, GetPostListResponse>
 {
     protected readonly IPostRepository Repository;
 
@@ -20,7 +19,7 @@ public abstract class GetPostsWithAuthorizationUseCase<TRequest> : AuthorizedUse
 
     protected override async Task Handle(
         string userExternalId,
-        TRequest request,
+        GetPostListRequest request,
         IPresenter<GetPostListResponse> presenter)
     {
         List<PostShortInfo> result = await GetPosts(userExternalId, request.ListParams);
