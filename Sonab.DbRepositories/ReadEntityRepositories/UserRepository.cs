@@ -15,5 +15,5 @@ public class UserRepository : IUserRepository
     }
 
     public Task<User> GetByExternalIdAsync(string externalId) =>
-        _context.Users.FirstOrDefaultAsync(x => x.ExternalId == externalId);
+        _context.Users.AsTracking().FirstOrDefaultAsync(x => x.ExternalId == externalId);
 }

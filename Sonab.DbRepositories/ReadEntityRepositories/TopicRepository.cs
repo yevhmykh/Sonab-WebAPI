@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Sonab.Core.Constants;
-using Sonab.Core.Dto.Posts;
 using Sonab.Core.Dto.TopicTags;
 using Sonab.Core.Entities;
 using Sonab.Core.Interfaces.Repositories.ReadEntity;
@@ -19,6 +18,7 @@ public class TopicRepository : ITopicRepository
 
     public Task<List<Topic>> GetAsync(IEnumerable<int> ids) => _context.Topics
         .Where(x => ids.Contains(x.Id))
+        .AsTracking()
         .ToListAsync();
 
     public Task<List<TopicTag>> GetByAsync(string namePart) => _context.Topics

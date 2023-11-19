@@ -120,5 +120,6 @@ public class PostRepository : IPostRepository
         .Include(x => x.User)
         .Include(x => x.Topics)
         .AsSplitQuery()
+        .AsTracking()
         .FirstOrDefaultAsync(x => x.Id == id);
 }

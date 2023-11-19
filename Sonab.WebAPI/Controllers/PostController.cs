@@ -118,7 +118,7 @@ public class PostController : BaseController
         (List<int> ids, List<string> names) = request.SplitTags();
         return await ExecuteUseCase(
             new CreatePostRequest(request.Title, request.Content, ids, names),
-            new CreatePostUseCase(_unitOfWork, _userRepository, _topicRepository),
+            new CreatePostUseCase(_unitOfWork),
             new CreatePostPresenter(request)
         );
     }
@@ -138,7 +138,7 @@ public class PostController : BaseController
         (List<int> ids, List<string> names) = request.SplitTags();
         return await ExecuteUseCase(
             new EditPostRequest(id, request.Title, request.Content, ids, names),
-            new EditPostUseCase(_unitOfWork, _userRepository, _topicRepository),
+            new EditPostUseCase(_unitOfWork),
             new EditPostPresenter(request)
         );
     }
